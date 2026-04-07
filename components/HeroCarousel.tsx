@@ -1,0 +1,128 @@
+"use client";
+
+import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import type { Post } from "@/lib/wordpress";
+
+const CATEGORY_COLORS: Record<string, string> = {
+  actualitate: "bg-blue-600",
+  politica: "bg-red-600",
+  sport: "bg-green-600",
+  economie: "bg-orange-500",
+  externe: "bg-purple-600",
+  sanatate: "bg-teal-600",
+  constanta: "bg-cyan-600",
+  interne: "bg-indigo-600",
+};
+
+function getCategoryColor(slug: string) {
+  return CATEGORY_COLORS[slug] || "bg-brand-blue";
+}
+
+export default function HeroCarousel({ posts }: { posts: Post[] }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const index = Math.round(container.scrollTop / container.clientHeight);
+      setActiveIndex(index);
+    };
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="h-[calc(100dvh-64px)] overflow-y-scroll snap-y snap-mandatory scrollbar-none lg:hidden"
+      style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+    >
+      {posts.map((post, i) => {
+        const category = post.categories?.nodes?.[0];
+        const imageUrl = post.featuredImage?.node?.sourceUrl;
+        const imageAlt = post.featuredImage?.node?.altText || post.title;
+
+        return (
+          <div
+            key={post.id}
+            className="h-[calc(100dvh-64px)] snap-start relative overflow-hidden bg-gray-900"
+          >
+            {/* Imagine full screen */}
+            {imageUrl && (
+              <Image
+                src={imageUrl}
+                alt={imageAlt}
+                fill
+                className="object-cover"
+                priority={i === 0}
+                sizes="100vw"
+              />
+            )}
+
+            {/* Gradient întunecat jos */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+
+            {/* Categorie — sus stânga */}
+            {category && (
+              <div className="absolute top-16 left-4">
+                <span
+                  className={`${getCategoryColor(category.slug)} text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide`}
+                >
+                  {category.name}
+                </span>
+              </div>
+            )}
+
+            {/* Indicatori slide — dreapta centru */}
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2">
+              {posts.map((_, j) => (
+                <div
+                  key={j}
+                  className={`w-1 rounded-full transition-all duration-300 ${
+                    j === activeIndex ? "h-8 bg-white" : "h-2 bg-white/35"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Titlu — jos */}
+            <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-20">
+              <Link href={`/articol/${post.slug}`}>
+                <h2
+                  className="text-white font-bold text-[28px] leading-snug line-clamp-3"
+                  dangerouslySetInnerHTML={{ __html: post.title }}
+                />
+              </Link>
+
+              {/* Hint swipe */}
+              {i < posts.length - 1 && (
+                <div className="flex items-center gap-2 mt-5 text-white/50 text-xs">
+                  <svg
+                    className="w-4 h-4 animate-bounce"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 15l7-7 7 7"
+                    />
+                  </svg>
+                  Swipe sus pentru mai multe
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

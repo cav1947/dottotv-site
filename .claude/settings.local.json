@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(ipconfig)",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(taskkill:*)",
+      "Bash(cmd:*)",
+      "Bash(powershell:*)",
+      "Bash(curl -s -X POST https://dottotv.ro/graphql -H 'Content-Type: application/json' -d '{\"query\":\"{ posts\\(first: 3, where: { status: PUBLISH }\\) { nodes { databaseId slug title date } } }\"}')",
+      "Bash(python -m json.tool)"
+    ]
+  }
+}

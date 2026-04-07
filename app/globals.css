@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-blue: #3c68b2;
+    --brand-blue-dark: #2d5090;
+  }
+
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
+  body {
+    @apply font-sans antialiased bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100;
+  }
+
+
+  h1, h2, h3, .font-playfair {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  * {
+    @apply transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+/* Ticker animation — keyframes defined in tailwind.config.ts (uses translateX(100%)) */
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* Article content styles */
+.article-content {
+  @apply text-gray-800 dark:text-gray-200 leading-relaxed;
+}
+
+.article-content h2 {
+  @apply font-playfair font-bold text-2xl mt-8 mb-4 text-gray-900 dark:text-white;
+}
+
+.article-content h3 {
+  @apply font-playfair font-semibold text-xl mt-6 mb-3 text-gray-900 dark:text-white;
+}
+
+.article-content p {
+  @apply mb-4 text-base leading-7;
+}
+
+.article-content a {
+  @apply text-brand-blue hover:underline;
+}
+
+.article-content ul, .article-content ol {
+  @apply mb-4 pl-6 space-y-2;
+}
+
+.article-content ul {
+  @apply list-disc;
+}
+
+.article-content ol {
+  @apply list-decimal;
+}
+
+.article-content blockquote {
+  @apply border-l-4 border-brand-blue pl-4 my-6 italic text-gray-600 dark:text-gray-400;
+}
+
+.article-content img {
+  @apply rounded-lg my-4 w-full;
+}
+
+.article-content figure {
+  @apply my-6;
+}
+
+.article-content figcaption {
+  @apply text-sm text-center text-gray-500 mt-2;
+}
+
+.article-content table {
+  @apply w-full border-collapse mb-4;
+}
+
+.article-content th, .article-content td {
+  @apply border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm;
+}
+
+.article-content th {
+  @apply bg-gray-50 dark:bg-gray-800 font-semibold;
+}
+
+/* Dark mode adjustments */
+.dark .bg-brand-blue {
+  background-color: var(--brand-blue);
+}
