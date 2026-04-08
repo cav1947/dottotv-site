@@ -60,7 +60,9 @@
 
 /* Article content styles */
 .article-content {
-  @apply text-gray-800 dark:text-gray-200 leading-relaxed;
+  @apply text-gray-800 dark:text-gray-200;
+  font-size: 18px;
+  line-height: 1.85;
 }
 
 .article-content h2 {
@@ -72,7 +74,7 @@
 }
 
 .article-content p {
-  @apply mb-4 text-base leading-7;
+  @apply mb-5 text-[18px] leading-[1.85];
 }
 
 .article-content a {

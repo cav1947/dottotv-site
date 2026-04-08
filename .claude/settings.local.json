@@ -8,7 +8,14 @@
       "Bash(cmd:*)",
       "Bash(powershell:*)",
       "Bash(curl -s -X POST https://dottotv.ro/graphql -H 'Content-Type: application/json' -d '{\"query\":\"{ posts\\(first: 3, where: { status: PUBLISH }\\) { nodes { databaseId slug title date } } }\"}')",
-      "Bash(python -m json.tool)"
+      "Bash(python -m json.tool)",
+      "Bash([ -f \"D:/dottotv-site/.env.local\" ])",
+      "Bash(curl -s http://localhost:3000/api/generate-seo)",
+      "Bash(node -e ':*)",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); j.data.categories.nodes.forEach\\(c=>console.log\\(c.slug, '|', c.name\\)\\);\")",
+      "Bash(curl:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(grep:*)"
     ]
   }
 }

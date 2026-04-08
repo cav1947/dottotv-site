@@ -4,6 +4,7 @@ import Providers from "./providers";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
+import CookieBanner from "@/components/CookieBanner";
 import { getCategories, getBreakingNews } from "@/lib/wordpress";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dottotv.ro";
@@ -91,6 +92,7 @@ export default async function RootLayout({
           {breakingNews.length > 0 && <BreakingNewsTicker posts={breakingNews} />}
           <main className="min-h-screen">{children}</main>
           <Footer categories={categories} />
+          <CookieBanner />
         </Providers>
       </body>
     </html>

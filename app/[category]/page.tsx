@@ -1,26 +1,31 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  getCategoryBySlug,
-  getPostsByCategory,
-  getMostViewedPosts,
-  getCategories,
-} from "@/lib/wordpress";
-import { getWeatherConstanta } from "@/lib/weather";
-import ArticleCard from "@/components/ArticleCard";
-import Sidebar from "@/components/Sidebar";
+import { getCategoryBySlug, getPostsByCategory } from "@/lib/wordpress";
 import AdBanner from "@/components/AdBanner";
-import ScrollReveal from "@/components/ScrollReveal";
+import CategoryInfiniteGrid from "@/components/CategoryInfiniteGrid";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dottotv.ro";
 
-// Sluguri rezervate (nu sunt categorii)
 const RESERVED_SLUGS = ["live", "cautare", "articol", "despre-noi", "contact", "sitemap.xml"];
+
+// Gradient per categorie pentru header
+const HEADER_GRADIENTS: Record<string, string> = {
+  actualitate:  "linear-gradient(135deg, #1e3a6e 0%, #3c68b2 100%)",
+  news:         "linear-gradient(135deg, #1e3a6e 0%, #2d5090 100%)",
+  sport:        "linear-gradient(135deg, #14532d 0%, #16a34a 100%)",
+  politica:     "linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)",
+  externe:      "linear-gradient(135deg, #3b0764 0%, #7c3aed 100%)",
+  sanatate:     "linear-gradient(135deg, #042f2e 0%, #0d9488 100%)",
+  interne:      "linear-gradient(135deg, #1e1b4b 0%, #4f46e5 100%)",
+  economie:     "linear-gradient(135deg, #7c2d12 0%, #f97316 100%)",
+  cultura:      "linear-gradient(135deg, #4a1942 0%, #a855f7 100%)",
+  meteo:        "linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%)",
+};
+const DEFAULT_GRADIENT = "linear-gradient(135deg, #2d5090 0%, #3c68b2 100%)";
 
 interface Props {
   params: Promise<{ category: string }>;
-  searchParams: Promise<{ pagina?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -47,120 +52,86 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export const revalidate = 120;
 
-export default async function CategoryPage({ params, searchParams }: Props) {
+export default async function CategoryPage({ params }: Props) {
   const { category: categorySlug } = await params;
-  const { pagina } = await searchParams;
 
   if (RESERVED_SLUGS.includes(categorySlug)) notFound();
 
-  const page = Number(pagina) || 1;
-  const postsPerPage = 12;
-
-  const [category, mostViewed, categories, weather] = await Promise.all([
+  const [category, { posts, pageInfo }] = await Promise.all([
     getCategoryBySlug(categorySlug).catch(() => null),
-    getMostViewedPosts(5).catch(() => []),
-    getCategories().catch(() => []),
-    getWeatherConstanta().catch(() => null),
+    getPostsByCategory(categorySlug, 12).catch(() => ({
+      posts: [],
+      pageInfo: { hasNextPage: false, endCursor: "" },
+    })),
   ]);
 
   if (!category) notFound();
 
-  const { posts, pageInfo } = await getPostsByCategory(
-    categorySlug,
-    postsPerPage
-  ).catch(() => ({ posts: [], pageInfo: { hasNextPage: false, endCursor: "" } }));
+  const gradient = HEADER_GRADIENTS[categorySlug] ?? DEFAULT_GRADIENT;
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      {/* Category header */}
-      <ScrollReveal>
-        <div className="mb-8">
-          <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <Link href="/" className="hover:text-brand-blue transition-colors">
-              Acasă
-            </Link>
-            <span>/</span>
-            <span className="text-gray-700 dark:text-gray-300 font-medium">
-              {category.name}
-            </span>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+
+      {/* ── HEADER CATEGORIE ── */}
+      <div style={{ background: gradient }} className="relative overflow-hidden">
+        {/* Pattern decorativ */}
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }} />
+
+        <div className="relative container mx-auto px-4 max-w-[1200px] py-10 md:py-14">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-white/60 mb-5">
+            <Link href="/" className="hover:text-white transition-colors">Acasă</Link>
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-white font-medium">{category.name}</span>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <div className="w-1.5 h-10 bg-brand-blue rounded-full" />
-            <div>
-              <h1 className="font-playfair font-bold text-3xl text-gray-900 dark:text-white">
-                {category.name}
-              </h1>
-              {category.description && (
-                <p className="text-gray-500 text-sm mt-1">{category.description}</p>
-              )}
-              {category.count > 0 && (
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {category.count} articole
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      </ScrollReveal>
+          {/* Nume categorie */}
+          <h1 className="font-playfair font-bold text-4xl md:text-6xl text-white leading-tight mb-3">
+            {category.name}
+          </h1>
 
-      {/* Ad top */}
-      <ScrollReveal>
-        <AdBanner slot={`category-${categorySlug}-top`} width={728} height={90} className="mb-6" />
-      </ScrollReveal>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Posts */}
-        <div className="lg:col-span-2">
-          {posts.length === 0 ? (
-            <div className="text-center py-16">
-              <p className="text-4xl mb-4">📰</p>
-              <p className="text-gray-500">Nu există articole în această categorie.</p>
-              <Link
-                href="/"
-                className="mt-4 inline-block text-brand-blue hover:underline"
-              >
-                ← Înapoi la pagina principală
-              </Link>
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {posts.map((post, index) => (
-                  <ScrollReveal key={post.id} delay={Math.min(index * 40, 200)}>
-                    <ArticleCard
-                      post={post}
-                      variant={index === 0 ? "large" : "medium"}
-                    />
-                  </ScrollReveal>
-                ))}
-              </div>
-
-              {/* Pagination */}
-              {pageInfo.hasNextPage && (
-                <div className="mt-8 flex justify-center">
-                  <Link
-                    href={`/${categorySlug}?pagina=${page + 1}`}
-                    className="bg-brand-blue hover:bg-brand-blue-dark text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                  >
-                    Pagina următoare →
-                  </Link>
-                </div>
-              )}
-            </>
+          {/* Descriere dacă există */}
+          {category.description && (
+            <p className="text-white/70 text-base md:text-lg max-w-xl leading-relaxed">
+              {category.description}
+            </p>
           )}
-        </div>
 
-        {/* Sidebar */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-24">
-            <Sidebar
-              mostViewed={mostViewed}
-              categories={categories}
-              weather={weather}
-            />
+          {/* Număr articole */}
+          <div className="flex items-center gap-3 mt-5">
+            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-full">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+              Cele mai recente știri
+            </div>
+            <div className="flex items-center gap-1.5 text-white/60 text-sm">
+              <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
+              Actualizat continuu
+            </div>
           </div>
         </div>
+      </div>
+
+      {/* ── CONȚINUT ── */}
+      <div className="container mx-auto px-4 max-w-[1200px] py-8">
+
+        {/* Ad top */}
+        <div className="mb-8">
+          <AdBanner slot={`category-${categorySlug}-top`} width={728} height={90} />
+        </div>
+
+        {/* Grid cu infinite scroll */}
+        <CategoryInfiniteGrid
+          initialPosts={posts}
+          initialPageInfo={pageInfo}
+          categorySlug={categorySlug}
+        />
       </div>
     </div>
   );

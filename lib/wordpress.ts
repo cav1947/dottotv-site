@@ -223,7 +223,9 @@ export async function getCategories(): Promise<Category[]> {
       }
     `
   );
-  return (data.categories?.nodes ?? []).map(normalizeCategory);
+  return (data.categories?.nodes ?? [])
+    .map(normalizeCategory)
+    .filter((cat) => cat.slug !== "uncategorized");
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {

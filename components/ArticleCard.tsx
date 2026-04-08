@@ -58,7 +58,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
         <div className="flex-1 min-w-0">
           {category && <CategoryBadge category={category} />}
           <Link href={`/articol/${post.slug}`}>
-            <h4 className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-2 leading-snug mt-0.5 transition-colors"
+            <h4 className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-3 leading-snug mt-0.5 transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
           </Link>
           <p className="text-[10px] text-gray-400 mt-1">{timeAgo(post.date)}</p>
@@ -81,7 +81,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
         <div className="flex-1 min-w-0 py-2 pr-3">
           {category && <CategoryBadge category={category} />}
           <Link href={`/articol/${post.slug}`}>
-            <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-2 mt-0.5 leading-snug transition-colors"
+            <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-3 mt-0.5 leading-snug transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
           </Link>
           <p className="hidden sm:block text-[10px] text-gray-400 mt-1">{timeAgo(post.date)}</p>
@@ -106,7 +106,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
         )}
         <div className="p-3">
           <Link href={`/articol/${post.slug}`}>
-            <h3 className="font-bold text-sm text-gray-800 dark:text-gray-200 group-hover:text-brand-blue line-clamp-2 leading-snug transition-colors"
+            <h3 className="font-bold text-sm text-gray-800 dark:text-gray-200 group-hover:text-brand-blue line-clamp-3 leading-snug transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
           </Link>
           <p className="hidden sm:block text-[10px] text-gray-400 mt-1.5">{timeAgo(post.date)}</p>
@@ -131,7 +131,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
         )}
         <div className="p-4">
           <Link href={`/articol/${post.slug}`}>
-            <h2 className="font-playfair font-bold text-[17px] sm:text-xl text-gray-900 dark:text-white group-hover:text-brand-blue line-clamp-2 leading-tight transition-colors"
+            <h2 className="font-playfair font-bold text-[17px] sm:text-xl text-gray-900 dark:text-white group-hover:text-brand-blue line-clamp-3 leading-tight transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
           </Link>
           <div className="hidden sm:flex items-center justify-between mt-3">
@@ -163,7 +163,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
             <h2 className="font-playfair font-bold text-[22px] md:text-3xl lg:text-4xl text-white group-hover:text-blue-200 line-clamp-3 leading-tight transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
           </Link>
-          <div className="hidden md:block text-sm text-gray-300 mt-2 line-clamp-2"
+          <div className="hidden md:block text-sm text-gray-300 mt-2 line-clamp-3"
             dangerouslySetInnerHTML={{ __html: post.excerpt }} />
           <div className="flex items-center gap-3 mt-3">
             <span className="text-xs text-gray-300">{timeAgo(post.date)}</span>
@@ -189,7 +189,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
       )}
       <div className="p-3">
         <Link href={`/articol/${post.slug}`}>
-          <h3 className="font-bold text-[17px] sm:text-sm text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-2 leading-snug transition-colors"
+          <h3 className="font-bold text-[17px] sm:text-sm text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-3 leading-snug transition-colors"
             dangerouslySetInnerHTML={{ __html: post.title }} />
         </Link>
         <div className="hidden sm:flex items-center justify-between mt-2">

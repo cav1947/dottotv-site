@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
+import SearchOverlay from "./SearchOverlay";
 import type { Category } from "@/lib/wordpress";
 
 interface Props {
@@ -13,9 +14,11 @@ interface Props {
 export default function Header({ categories }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
-  const mainCategories = categories.slice(0, 7);
+  const allowedSlugs = ["actualitate", "news", "interne", "externe", "sport", "politica", "sanatate"];
+  const mainCategories = allowedSlugs
+    .map((slug) => categories.find((c) => c.slug === slug))
+    .filter(Boolean) as typeof categories;
 
   return (
     <header className="sticky top-0 z-50 shadow-md">
@@ -37,19 +40,25 @@ export default function Header({ categories }: Props) {
             </Link>
 
             {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-1 overflow-x-auto scrollbar-none">
               {mainCategories.map((cat) => (
                 <Link
                   key={cat.id}
                   href={`/${cat.slug}`}
-                  className="text-white/90 hover:text-white hover:bg-white/20 px-3 py-2 rounded text-sm font-medium transition-colors"
+                  className="text-white/90 hover:text-white hover:bg-white/20 px-3 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap"
                 >
                   {cat.name}
                 </Link>
               ))}
               <Link
+                href="/despre-noi"
+                className="text-white/90 hover:text-white hover:bg-white/20 px-3 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap"
+              >
+                Despre noi
+              </Link>
+              <Link
                 href="/live"
-                className="ml-2 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-sm font-bold transition-colors flex items-center gap-1"
+                className="ml-2 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded text-sm font-bold transition-colors flex items-center gap-1 whitespace-nowrap"
               >
                 <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
                 LIVE TV
@@ -88,30 +97,11 @@ export default function Header({ categories }: Props) {
             </div>
           </div>
 
-          {/* Search bar */}
-          {searchOpen && (
-            <div className="pb-3">
-              <form action="/cautare" method="get" className="flex gap-2">
-                <input
-                  type="text"
-                  name="q"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Caută știri..."
-                  className="flex-1 px-4 py-2 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-white/50"
-                  autoFocus
-                />
-                <button
-                  type="submit"
-                  className="bg-white text-brand-blue px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors"
-                >
-                  Caută
-                </button>
-              </form>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Search overlay */}
+      {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
 
       {/* Mobile menu */}
       {menuOpen && (
@@ -128,6 +118,13 @@ export default function Header({ categories }: Props) {
               </Link>
             ))}
             <Link
+              href="/despre-noi"
+              onClick={() => setMenuOpen(false)}
+              className="text-white/90 hover:text-white py-3 text-sm font-medium border-b border-white/10"
+            >
+              Despre noi
+            </Link>
+            <Link
               href="/live"
               onClick={() => setMenuOpen(false)}
               className="text-red-400 hover:text-red-300 py-3 text-sm font-bold flex items-center gap-2"
@@ -139,28 +136,6 @@ export default function Header({ categories }: Props) {
         </div>
       )}
 
-      {/* Secondary nav / breadcrumb categories bar */}
-      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 hidden md:block">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-4 h-10 overflow-x-auto scrollbar-none">
-            <Link
-              href="/"
-              className="text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue text-xs font-medium whitespace-nowrap transition-colors"
-            >
-              Acasă
-            </Link>
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/${cat.slug}`}
-                className="text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue text-xs font-medium whitespace-nowrap transition-colors"
-              >
-                {cat.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
     </header>
   );
 }

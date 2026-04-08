@@ -73,7 +73,6 @@ export default function Sidebar({ mostViewed, categories, weather, latestPosts }
               className={`inline-flex items-center gap-1 ${CAT_COLORS[cat.slug] || "bg-brand-blue"} hover:opacity-80 text-white text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wide transition-opacity`}
             >
               {cat.name}
-              <span className="opacity-70 font-normal">({cat.count})</span>
             </Link>
           ))}
         </div>
