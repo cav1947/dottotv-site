@@ -51,10 +51,10 @@ export default function Header({ categories }: Props) {
                 </Link>
               ))}
               <Link
-                href="/despre-noi"
+                href="/category/utilitare"
                 className="text-white/90 hover:text-white hover:bg-white/20 px-3 py-2 rounded text-sm font-medium transition-colors whitespace-nowrap"
               >
-                Despre noi
+                Utilitare
               </Link>
               <Link
                 href="/live"
@@ -118,11 +118,11 @@ export default function Header({ categories }: Props) {
               </Link>
             ))}
             <Link
-              href="/despre-noi"
+              href="/category/utilitare"
               onClick={() => setMenuOpen(false)}
               className="text-white/90 hover:text-white py-3 text-sm font-medium border-b border-white/10"
             >
-              Despre noi
+              Utilitare
             </Link>
             <Link
               href="/live"

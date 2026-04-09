@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Post } from "@/lib/wordpress";
@@ -23,6 +24,8 @@ function getCategoryColor(slug: string) {
 export default function HeroCarousel({ posts }: { posts: Post[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartY = useRef<number | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const container = containerRef.current;
@@ -53,20 +56,30 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
             key={post.id}
             className="h-[calc(100dvh-64px)] snap-start relative overflow-hidden bg-gray-900"
           >
-            {/* Imagine full screen */}
-            {imageUrl && (
-              <Image
-                src={imageUrl}
-                alt={imageAlt}
-                fill
-                className="object-cover"
-                priority={i === 0}
-                sizes="100vw"
-              />
-            )}
-
-            {/* Gradient întunecat jos */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+            {/* Imagine full screen — tap navighează, swipe derulează */}
+            <div
+              className="absolute inset-0"
+              onTouchStart={(e) => { touchStartY.current = e.touches[0].clientY; }}
+              onTouchEnd={(e) => {
+                if (touchStartY.current === null) return;
+                const delta = Math.abs(e.changedTouches[0].clientY - touchStartY.current);
+                touchStartY.current = null;
+                if (delta < 10) router.push(`/articol/${post.slug}`);
+              }}
+            >
+              {imageUrl && (
+                <Image
+                  src={imageUrl}
+                  alt={imageAlt}
+                  fill
+                  className="object-cover"
+                  priority={i === 0}
+                  sizes="100vw"
+                />
+              )}
+              {/* Gradient întunecat jos */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+            </div>
 
             {/* Categorie — sus stânga */}
             {category && (
@@ -92,10 +105,10 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
             </div>
 
             {/* Titlu — jos */}
-            <div className="absolute bottom-0 left-0 right-0 px-5 pb-10 pt-20">
+            <div className="absolute bottom-16 left-0 right-0 px-5 pb-4 pt-20">
               <Link href={`/articol/${post.slug}`}>
                 <h2
-                  className="text-white font-bold text-[28px] leading-snug line-clamp-3"
+                  className="text-white font-bold text-[24px] leading-snug"
                   dangerouslySetInnerHTML={{ __html: post.title }}
                 />
               </Link>
