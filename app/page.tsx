@@ -12,11 +12,22 @@ import {
   getPostsByCategory,
 } from "@/lib/wordpress";
 import { getWeatherConstanta } from "@/lib/weather";
+import { websiteSchema, organizationSchema, SITE_URL } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "DottoTV - Știri din Constanța și România",
-  description: "Cele mai recente știri din Constanța și România. Actualitate, politică, sport, economie și LIVE TV.",
+  title: "DOTTO TV - Știri din Constanța și Dobrogea",
+  description: "Televiziunea locală a județului Constanța. Știri corecte, rapide și imparțiale din Dobrogea. Urmărește LIVE TV.",
+  robots: { index: true, follow: true },
+  alternates: {
+    canonical: SITE_URL,
+    languages: { "ro-RO": SITE_URL },
+  },
+  openGraph: {
+    siteName: "DOTTO TV",
+    locale: "ro_RO",
+    type: "website",
+  },
 };
 
 export const revalidate = 60;
@@ -27,6 +38,7 @@ const SECTION_COLORS: Record<string, string> = {
   economie: "bg-orange-500",
   constanta: "bg-cyan-600",
   externe: "bg-purple-600",
+  sanatate: "bg-teal-600",
 };
 
 function SectionHeader({ title, slug, color = "bg-brand-blue" }: { title: string; slug: string; color?: string }) {
@@ -44,7 +56,8 @@ function SectionHeader({ title, slug, color = "bg-brand-blue" }: { title: string
 }
 
 export default async function HomePage() {
-  const [allPosts, mostViewed, categories, weather, sportPosts, politicaPosts, economiePosts, constanta, externePosts] =
+  const [allPosts, mostViewed, categories, weather, sportPosts, politicaPosts, sanatateaLaZiPosts, constanta, ,
+    externeLatest, interneLatest, utilitareLatest, culturaLatest, evenimentePosts] =
     await Promise.all([
       getLatestPosts(35).catch(() => []),
       getMostViewedPosts(5).catch(() => []),
@@ -52,25 +65,49 @@ export default async function HomePage() {
       getWeatherConstanta().catch(() => null),
       getPostsByCategory("sport", 5).catch(() => ({ posts: [] })),
       getPostsByCategory("politica", 5).catch(() => ({ posts: [] })),
-      getPostsByCategory("economie", 4).catch(() => ({ posts: [] })),
+      getPostsByCategory("sanatate", 4).catch(() => ({ posts: [] })),
       getPostsByCategory("constanta", 5).catch(() => ({ posts: [] })),
-      getPostsByCategory("externe", 4).catch(() => ({ posts: [] })),
+      getPostsByCategory("externe", 4).catch(() => ({ posts: [] })),   // păstrat la același index, neutilizat
+      getPostsByCategory("externe", 3).catch(() => ({ posts: [] })),
+      getPostsByCategory("interne", 3).catch(() => ({ posts: [] })),
+      getPostsByCategory("utilitare", 5).catch(() => ({ posts: [] })),
+      getPostsByCategory("cultura", 1).catch(() => ({ posts: [] })),
+      getPostsByCategory("evenimente", 5).catch(() => ({ posts: [] })),
     ]);
 
-  const heroPost = allPosts[0];
-  const hero2 = allPosts[1];
-  const hero3 = allPosts[2];
-  const hero4 = allPosts[3];
-  const hero5 = allPosts[4];
-  const latestRow = allPosts.slice(5, 9);    // 4 cards
-  const latestRow2 = allPosts.slice(9, 13);   // 4 cards
-  const latestRow3 = allPosts.slice(13, 17);  // 4 cards
+  // Elimină duplicate după id — același articol poate fi în mai multe categorii
+  function dedup<T extends { id: string }>(arr: T[]): T[] {
+    const seen = new Set<string>();
+    return arr.filter((p) => {
+      if (seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
+    });
+  }
+
+  const uniquePosts        = dedup(allPosts);
+  const sportUnique        = dedup(sportPosts.posts);
+  const politicaUnique     = dedup(politicaPosts.posts);
+  const constanțaUnique    = dedup(constanta.posts);
+  const sanatateUnique     = dedup(sanatateaLaZiPosts.posts);
+  const utilitareUnique    = dedup(utilitareLatest.posts);
+
+  const heroPost = uniquePosts[0];
+  const hero2 = uniquePosts[1];
+  const hero3 = uniquePosts[2];
+  const hero4 = uniquePosts[3];
+  const hero5 = uniquePosts[4];
+  const latestRow = uniquePosts.slice(5, 9);
+  const latestRow2 = uniquePosts.slice(9, 13);
 
   const carouselPosts = [heroPost, hero2, hero3, hero4, hero5].filter(
     (p): p is NonNullable<typeof p> => !!p
   );
 
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
     <div className="bg-gray-100 dark:bg-gray-950 min-h-screen">
 
       {/* MOBILE: carousel full-width, în afara containerului */}
@@ -78,9 +115,22 @@ export default async function HomePage() {
 
       <div className="container mx-auto px-3 py-4 max-w-[1400px]">
 
-        {/* ── TOP AD ── */}
-        <div className="mb-4 hidden lg:block">
-          <AdBanner slot="homepage-top" width={970} height={90} />
+        {/* ── TOP AD — VIVO CT ── */}
+        <div
+          className="mb-4 flex justify-center items-center py-2 rounded-xl"
+          style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f7ff 100%)" }}
+        >
+          <a href="#" rel="noopener noreferrer sponsored" aria-label="Publicitate VIVO CT" className="block w-full md:w-auto md:flex-shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/ads/VIVO_CT_LOCAL-DISPLAY_728x90px.gif"
+              alt="Publicitate"
+              width={728}
+              height={90}
+              style={{ display: "block", objectFit: "contain" }}
+              className="w-full h-auto md:w-[728px] md:h-[90px]"
+            />
+          </a>
         </div>
 
         {/* ════════════════════════════════════════════════
@@ -109,9 +159,22 @@ export default async function HomePage() {
           </div>
         </ScrollReveal>
 
-        {/* ── AD strip ── */}
-        <div className="mb-4">
-          <AdBanner slot="homepage-strip" width={728} height={90} />
+        {/* ── AD strip — Confort Urban ── */}
+        <div
+          className="mb-4 flex justify-center items-center py-2 rounded-xl"
+          style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f7ff 100%)" }}
+        >
+          <a href="#" rel="noopener noreferrer sponsored" aria-label="Publicitate Confort Urban" className="block w-full md:w-auto md:flex-shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/ads/Confort%20urban728x90.webp"
+              alt="Publicitate"
+              width={728}
+              height={90}
+              style={{ display: "block", objectFit: "contain" }}
+              className="w-full h-auto md:w-[728px] md:h-[90px]"
+            />
+          </a>
         </div>
 
         {/* ════════════════════════════════════════════════
@@ -122,12 +185,34 @@ export default async function HomePage() {
           {/* LEFT — conținut principal */}
           <div className="space-y-6">
 
-            {/* ── LATEST ROW 2 ── */}
+            {/* ── ULTIMELE ȘTIRI (câte 1 din: Externe, Interne, Utilitare, Cultură) ── */}
             <ScrollReveal>
               <div>
                 <SectionHeader title="Ultimele Știri" slug="actualitate" color="bg-brand-blue" />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {latestRow2.map(p => <ArticleCard key={p.id} post={p} variant="medium" />)}
+                  {[
+                    { post: externeLatest.posts[0],   label: "Externe",   slug: "externe" },
+                    { post: interneLatest.posts[0],   label: "Interne",   slug: "interne" },
+                    { post: utilitareLatest.posts[0], label: "Utilitare", slug: "utilitare" },
+                    { post: culturaLatest.posts[0],   label: "Cultură",   slug: "cultura" },
+                  ].map(({ post, label, slug }) =>
+                    post ? (
+                      // key pe slug (nu post.id) — garantat unic chiar dacă același articol e în 2 categorii
+                      <ArticleCard key={slug} post={post} variant="medium" />
+                    ) : (
+                      <div
+                        key={slug}
+                        className="bg-white dark:bg-gray-900 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center gap-2 p-6 min-h-[180px] text-center"
+                      >
+                        <svg className="w-7 h-7 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 11v4M12 7h.01" />
+                        </svg>
+                        <p className="text-xs font-semibold text-gray-400 dark:text-gray-500">{label}</p>
+                        <p className="text-[11px] text-gray-300 dark:text-gray-600">Niciun articol</p>
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             </ScrollReveal>
@@ -143,12 +228,12 @@ export default async function HomePage() {
                 <div>
                   <SectionHeader title="Sport" slug="sport" color={SECTION_COLORS.sport} />
                   <div className="space-y-0">
-                    {sportPosts.posts[0] && (
+                    {sportUnique[0] && (
                       <div className="mb-2">
-                        <ArticleCard post={sportPosts.posts[0]} variant="large" />
+                        <ArticleCard post={sportUnique[0]} variant="large" />
                       </div>
                     )}
-                    {sportPosts.posts.slice(1, 4).map(p => (
+                    {sportUnique.slice(1, 4).map(p => (
                       <ArticleCard key={p.id} post={p} variant="horizontal" />
                     ))}
                   </div>
@@ -158,12 +243,12 @@ export default async function HomePage() {
                 <div>
                   <SectionHeader title="Politică" slug="politica" color={SECTION_COLORS.politica} />
                   <div className="space-y-0">
-                    {politicaPosts.posts[0] && (
+                    {politicaUnique[0] && (
                       <div className="mb-2">
-                        <ArticleCard post={politicaPosts.posts[0]} variant="large" />
+                        <ArticleCard post={politicaUnique[0]} variant="large" />
                       </div>
                     )}
-                    {politicaPosts.posts.slice(1, 4).map(p => (
+                    {politicaUnique.slice(1, 4).map(p => (
                       <ArticleCard key={p.id} post={p} variant="horizontal" />
                     ))}
                   </div>
@@ -171,26 +256,29 @@ export default async function HomePage() {
               </div>
             </ScrollReveal>
 
-            {/* ── LATEST ROW 3 (4 carduri) ── */}
+            {/* ── EXTERNE (2) + INTERNE (2) — fără duplicat față de Ultimele Știri ── */}
             <ScrollReveal delay={100}>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {latestRow3.map(p => <ArticleCard key={p.id} post={p} variant="medium" />)}
+                {dedup([
+                  ...externeLatest.posts.slice(1, 3),
+                  ...interneLatest.posts.slice(1, 3),
+                ]).map(p => <ArticleCard key={p.id} post={p} variant="medium" />)}
               </div>
             </ScrollReveal>
 
             {/* ── CONSTANȚA ── */}
-            {constanta.posts.length > 0 && (
+            {constanțaUnique.length > 0 && (
               <ScrollReveal delay={120}>
                 <div>
                   <SectionHeader title="Constanța" slug="constanta" color={SECTION_COLORS.constanta} />
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-                    {constanta.posts[0] && (
+                    {constanțaUnique[0] && (
                       <div className="md:col-span-5">
-                        <ArticleCard post={constanta.posts[0]} variant="large" />
+                        <ArticleCard post={constanțaUnique[0]} variant="large" />
                       </div>
                     )}
                     <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {constanta.posts.slice(1, 5).map(p => (
+                      {constanțaUnique.slice(1, 5).map(p => (
                         <ArticleCard key={p.id} post={p} variant="small" />
                       ))}
                     </div>
@@ -199,21 +287,22 @@ export default async function HomePage() {
               </ScrollReveal>
             )}
 
-            {/* ── ECONOMIE + EXTERNE side by side ── */}
+            {/* ── SĂNĂTATEA LA ZI + UTILITARE side by side ── */}
             <ScrollReveal delay={150}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <SectionHeader title="Economie" slug="economie" color={SECTION_COLORS.economie} />
+                  <SectionHeader title="Sănătatea la Zi" slug="sanatate" color={SECTION_COLORS.sanatate} />
                   <div className="space-y-2">
-                    {economiePosts.posts.slice(0, 4).map(p => (
+                    {sanatateUnique.slice(0, 4).map(p => (
                       <ArticleCard key={p.id} post={p} variant="horizontal" />
                     ))}
                   </div>
                 </div>
                 <div>
-                  <SectionHeader title="Externe" slug="externe" color={SECTION_COLORS.externe} />
+                  <SectionHeader title="Utilitare" slug="utilitare" color="bg-amber-600" />
                   <div className="space-y-2">
-                    {externePosts.posts.slice(0, 4).map(p => (
+                    {/* slice(1) exclude primul articol deja afișat în Ultimele Știri */}
+                    {utilitareUnique.slice(1, 5).map(p => (
                       <ArticleCard key={p.id} post={p} variant="horizontal" />
                     ))}
                   </div>
@@ -259,12 +348,14 @@ export default async function HomePage() {
                 mostViewed={mostViewed}
                 categories={categories}
                 weather={weather}
-                latestPosts={allPosts.slice(0, 6)}
+                latestPosts={uniquePosts.slice(0, 6)}
+                evenimentePosts={evenimentePosts.posts}
               />
             </div>
           </aside>
         </div>
       </div>
     </div>
+    </>
   );
 }

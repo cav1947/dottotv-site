@@ -22,6 +22,33 @@ function getCategoryColor(slug: string): string {
   return CATEGORY_COLORS[slug] || "bg-brand-blue";
 }
 
+function hasVideo(content: string): boolean {
+  if (!content) return false;
+  return (
+    content.includes("youtube.com/embed") ||
+    content.includes("youtu.be") ||
+    content.includes("youtube.com/watch") ||
+    content.includes("vimeo.com") ||
+    content.includes("<video") ||
+    content.includes("wp-block-video") ||
+    content.includes("wp-block-embed-youtube") ||
+    content.includes("wp-block-embed-vimeo") ||
+    content.includes("[video")
+  );
+}
+
+function PlayIcon() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center backdrop-blur-[2px]">
+        <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 function timeAgo(dateString: string): string {
   const diff = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
   if (diff < 60) return "acum câteva secunde";
@@ -43,6 +70,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
   const category = post.categories?.nodes?.[0];
   const imageUrl = post.featuredImage?.node?.sourceUrl;
   const imageAlt = post.featuredImage?.node?.altText || post.title;
+  const isVideo = hasVideo(post.content);
 
   /* ── LIST ── */
   if (variant === "list") {
@@ -52,6 +80,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
           <Link href={`/articol/${post.slug}`} className="flex-shrink-0">
             <div className="relative w-20 h-14 overflow-hidden rounded">
               <Image src={imageUrl} alt={imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="80px" />
+              {isVideo && <PlayIcon />}
             </div>
           </Link>
         )}
@@ -75,6 +104,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
           <Link href={`/articol/${post.slug}`} className="flex-shrink-0">
             <div className="relative w-28 h-20 overflow-hidden">
               <Image src={imageUrl} alt={imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="112px" />
+              {isVideo && <PlayIcon />}
             </div>
           </Link>
         )}
@@ -102,11 +132,12 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
                 {category.name}
               </span>
             )}
+            {isVideo && <PlayIcon />}
           </Link>
         )}
         <div className="p-3">
           <Link href={`/articol/${post.slug}`}>
-            <h3 className="font-bold text-sm text-gray-800 dark:text-gray-200 group-hover:text-brand-blue line-clamp-3 leading-snug transition-colors"
+            <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-gray-200 group-hover:text-brand-blue line-clamp-3 leading-snug transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
           </Link>
           <p className="hidden sm:block text-[10px] text-gray-400 mt-1.5">{timeAgo(post.date)}</p>
@@ -127,6 +158,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
                 {category.name}
               </span>
             )}
+            {isVideo && <PlayIcon />}
           </Link>
         )}
         <div className="p-4">
@@ -153,6 +185,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
           <div className="absolute inset-0 bg-gradient-to-br from-brand-blue to-brand-blue-dark" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+        {isVideo && <PlayIcon />}
         <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
           {category && (
             <span className={`inline-block ${getCategoryColor(category.slug)} text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wide mb-3`}>
@@ -185,11 +218,12 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
               {category.name}
             </span>
           )}
+          {isVideo && <PlayIcon />}
         </Link>
       )}
       <div className="p-3">
         <Link href={`/articol/${post.slug}`}>
-          <h3 className="font-bold text-[17px] sm:text-sm text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-3 leading-snug transition-colors"
+          <h3 className="font-bold text-[17px] sm:text-base text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-3 leading-snug transition-colors"
             dangerouslySetInnerHTML={{ __html: post.title }} />
         </Link>
         <div className="hidden sm:flex items-center justify-between mt-2">

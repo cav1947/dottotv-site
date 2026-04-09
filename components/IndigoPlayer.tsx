@@ -1,53 +1,96 @@
 "use client";
 
-import Script from "next/script";
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useState } from "react";
 
 const STREAM_URL = "https://live.dottotv.ro/index.m3u8";
 
-export default function IndigoPlayer() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const initialized = useRef(false);
+export default function HLSPlayer() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const hlsRef = useRef<{ destroy: () => void } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  const initPlayer = useCallback(() => {
-    if (initialized.current || !containerRef.current) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const IG = (window as any).IndigoPlayer;
-    if (!IG) return;
-    initialized.current = true;
-    IG.init(containerRef.current, {
-      sources: [{ type: "hls", src: STREAM_URL }],
-      autoplay: true,
-      ui: { pip: true },
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Safari și browsere cu suport HLS nativ
+    if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = STREAM_URL;
+      video.play().catch(() => {});
+      setLoading(false);
+      return;
+    }
+
+    // Dynamic import — rulează doar pe client, niciodată pe server
+    import("hls.js").then(({ default: Hls }) => {
+      if (!Hls.isSupported()) {
+        setError(true);
+        setLoading(false);
+        return;
+      }
+
+      const hls = new Hls({ enableWorker: true, lowLatencyMode: true });
+      hlsRef.current = hls;
+
+      hls.loadSource(STREAM_URL);
+      hls.attachMedia(video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        setLoading(false);
+        setError(false);
+        video.play().catch(() => {});
+      });
+
+      hls.on(Hls.Events.ERROR, (_: unknown, data: { fatal: boolean; type: string }) => {
+        if (data.fatal) {
+          setError(true);
+          setLoading(false);
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+            hls.startLoad();
+          } else {
+            hls.destroy();
+          }
+        }
+      });
     });
+
+    return () => {
+      hlsRef.current?.destroy();
+    };
   }, []);
 
-  // Dacă scriptul era deja în cache și onLoad nu mai pornește
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if ((window as any).IndigoPlayer) initPlayer();
-  }, [initPlayer]);
-
   return (
-    <>
-      <Script
-        src="https://cdn.jsdelivr.net/npm/indigo-player@1/lib/indigo-player.js"
-        strategy="afterInteractive"
-        onLoad={initPlayer}
+    <div className="relative w-full aspect-video bg-black">
+      <video
+        ref={videoRef}
+        className="w-full h-full"
+        controls
+        autoPlay
+        playsInline
+        crossOrigin="anonymous"
+        style={{ display: "block" }}
       />
-      {/* Placeholder vizibil până se inițializează playerul */}
-      <div className="relative w-full aspect-video bg-black">
-        <div ref={containerRef} className="absolute inset-0 w-full h-full" />
-        {/* Spinner de loading peste player */}
-        <div
-          id="player-loading"
-          className="absolute inset-0 flex flex-col items-center justify-center bg-black pointer-events-none"
-          style={{ zIndex: 1 }}
-        >
+
+      {/* Spinner loading */}
+      {loading && !error && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black pointer-events-none">
           <div className="w-12 h-12 border-4 border-white/20 border-t-red-500 rounded-full animate-spin mb-4" />
           <p className="text-white/60 text-sm">Se conectează la stream...</p>
         </div>
-      </div>
-    </>
+      )}
+
+      {/* Eroare */}
+      {error && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 pointer-events-none">
+          <svg className="w-10 h-10 text-red-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.6}
+              d="M12 9v2m0 4h.01M5.07 19H19a2 2 0 001.75-2.98L13.75 4a2 2 0 00-3.5 0l-6.25 11.02A2 2 0 005.07 19z" />
+          </svg>
+          <p className="text-white/80 text-sm font-medium">Eroare la conectarea stream-ului</p>
+          <p className="text-white/40 text-xs mt-1">Verificați conexiunea și reîncărcați pagina</p>
+        </div>
+      )}
+    </div>
   );
 }

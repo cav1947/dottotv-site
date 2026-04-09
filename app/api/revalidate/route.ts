@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
 
     // Revalidează pagini relevante
     revalidatePath("/");
+    revalidatePath("/", "layout"); // actualizează și layout-ul (Breaking News ticker)
 
     if (slug) {
       revalidatePath(`/articol/${slug}`);

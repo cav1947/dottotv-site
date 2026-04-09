@@ -89,7 +89,7 @@ export default function SearchOverlay({ onClose }: Props) {
   return (
     /* Backdrop */
     <div
-      className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex flex-col md:items-center md:pt-20 md:px-4"
+      className="fixed inset-0 z-[10000] bg-black/60 backdrop-blur-sm flex flex-col md:items-center md:pt-20 md:px-4"
       onClick={handleClose}
     >
       {/* Panel */}

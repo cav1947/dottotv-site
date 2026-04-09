@@ -15,7 +15,10 @@
       "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); j.data.categories.nodes.forEach\\(c=>console.log\\(c.slug, '|', c.name\\)\\);\")",
       "Bash(curl:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx next:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

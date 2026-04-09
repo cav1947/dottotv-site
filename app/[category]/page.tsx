@@ -4,8 +4,7 @@ import Link from "next/link";
 import { getCategoryBySlug, getPostsByCategory } from "@/lib/wordpress";
 import AdBanner from "@/components/AdBanner";
 import CategoryInfiniteGrid from "@/components/CategoryInfiniteGrid";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dottotv.ro";
+import { SITE_URL, buildBreadcrumbSchema } from "@/lib/seo";
 
 const RESERVED_SLUGS = ["live", "cautare", "articol", "despre-noi", "contact", "sitemap.xml"];
 
@@ -35,17 +34,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = await getCategoryBySlug(categorySlug).catch(() => null);
   if (!category) return { title: "Categorie negăsită" };
 
+  const catUrl = `${SITE_URL}/${categorySlug}`;
+  const desc =
+    category.description ||
+    `Ultimele știri din categoria ${category.name} — DOTTO TV, televiziunea locală a județului Constanța.`;
+
   return {
-    title: `${category.name} - Știri | DottoTV`,
-    description:
-      category.description ||
-      `Cele mai recente știri din categoria ${category.name} pe DottoTV.`,
-    openGraph: {
-      title: `${category.name} | DottoTV`,
-      url: `${SITE_URL}/${categorySlug}`,
-    },
+    title: `${category.name} – Ultimele Știri | DOTTO TV`,
+    description: desc,
+    robots: { index: true, follow: true },
     alternates: {
-      canonical: `${SITE_URL}/${categorySlug}`,
+      canonical: catUrl,
+      languages: { "ro-RO": catUrl },
+    },
+    openGraph: {
+      siteName: "DOTTO TV",
+      title: `${category.name} | DOTTO TV`,
+      description: desc,
+      url: catUrl,
+      type: "website",
+      locale: "ro_RO",
+    },
+    twitter: {
+      card: "summary",
+      site: "@dottotv",
+      title: `${category.name} | DOTTO TV`,
+      description: desc,
     },
   };
 }
@@ -69,7 +83,14 @@ export default async function CategoryPage({ params }: Props) {
 
   const gradient = HEADER_GRADIENTS[categorySlug] ?? DEFAULT_GRADIENT;
 
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Acasă", url: SITE_URL },
+    { name: category.name, url: `${SITE_URL}/${categorySlug}` },
+  ]);
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
 
       {/* ── HEADER CATEGORIE ── */}
@@ -134,5 +155,6 @@ export default async function CategoryPage({ params }: Props) {
         />
       </div>
     </div>
+    </>
   );
 }

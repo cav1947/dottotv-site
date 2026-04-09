@@ -8,6 +8,7 @@ import {
   getMostViewedPosts,
   getCategories,
   getPostsByCategory,
+  getLatestPosts,
 } from "@/lib/wordpress";
 import { getWeatherConstanta } from "@/lib/weather";
 import Sidebar from "@/components/Sidebar";
@@ -15,8 +16,13 @@ import AdBanner from "@/components/AdBanner";
 import ArticleCard from "@/components/ArticleCard";
 import ReadingProgress from "@/components/ReadingProgress";
 import ShareButtons from "@/components/ShareButtons";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dottotv.ro";
+import { generateSEOForArticle } from "@/lib/claude";
+import {
+  SITE_URL,
+  buildNewsArticleSchema,
+  buildBreadcrumbSchema,
+  buildAltText,
+} from "@/lib/seo";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -27,37 +33,75 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPostBySlug(slug).catch(() => null);
   if (!post) return { title: "Articol negăsit" };
 
+  const articleUrl = `${SITE_URL}/articol/${slug}`;
   const imageUrl = post.featuredImage?.node?.sourceUrl;
-  const seoTitle = post.seo?.title || `${post.title} | DottoTV`;
-  const seoDesc =
-    post.seo?.metaDesc || post.excerpt.replace(/<[^>]*>/g, "").slice(0, 160);
+  const cleanTitle = post.title.replace(/<[^>]*>/g, "");
+  const cleanExcerpt = post.excerpt.replace(/<[^>]*>/g, "");
+  const category = post.categories?.nodes?.[0];
+  const authorName = post.author?.node?.name || "DottoTV";
+
+  // Prioritate: Yoast SEO → Claude API → fallback simplu
+  let seoTitle = post.seo?.title || "";
+  let seoDesc = post.seo?.metaDesc || "";
+  let focusKw = post.seo?.focusKw || "";
+
+  if (!seoTitle || !seoDesc) {
+    try {
+      const generated = await generateSEOForArticle({
+        title: cleanTitle,
+        excerpt: cleanExcerpt,
+        content: post.content,
+        category: category?.name || "Știri",
+        author: authorName,
+        publishDate: post.date,
+        url: articleUrl,
+      });
+      seoTitle = seoTitle || generated.metaTitle;
+      seoDesc = seoDesc || generated.metaDescription;
+      focusKw = focusKw || generated.focusKeyword;
+    } catch {
+      seoTitle = seoTitle || `${cleanTitle.slice(0, 55)} | DOTTO TV`;
+      seoDesc = seoDesc || cleanExcerpt.slice(0, 155);
+    }
+  }
+
+  const keywords = [
+    ...(focusKw ? [focusKw] : []),
+    "știri",
+    "Constanța",
+    "DOTTO TV",
+    ...(category ? [category.name] : []),
+  ];
 
   return {
     title: seoTitle,
     description: seoDesc,
-    keywords: post.seo?.focusKw
-      ? [post.seo.focusKw, "știri", "DottoTV"]
-      : ["știri", "DottoTV"],
+    keywords,
+    robots: { index: true, follow: true },
+    alternates: {
+      canonical: articleUrl,
+      languages: { "ro-RO": articleUrl },
+    },
     openGraph: {
+      siteName: "DOTTO TV",
       title: seoTitle,
       description: seoDesc,
-      url: `${SITE_URL}/articol/${slug}`,
+      url: articleUrl,
       type: "article",
       publishedTime: post.date,
       modifiedTime: post.modified,
-      authors: [post.author?.node?.name || "DottoTV"],
+      authors: [authorName],
+      locale: "ro_RO",
       images: imageUrl
-        ? [{ url: imageUrl, width: 1200, height: 630 }]
+        ? [{ url: imageUrl, width: 1200, height: 630, alt: buildAltText(undefined, cleanTitle, category?.name) }]
         : undefined,
     },
     twitter: {
       card: "summary_large_image",
+      site: "@dottotv",
       title: seoTitle,
       description: seoDesc,
       images: imageUrl ? [imageUrl] : undefined,
-    },
-    alternates: {
-      canonical: `${SITE_URL}/articol/${slug}`,
     },
   };
 }
@@ -83,14 +127,26 @@ function formatDate(dateString: string): string {
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
 
-  const [post, mostViewed, categories, weather] = await Promise.all([
+  const [post, mostViewed, categories, weather, latestPosts] = await Promise.all([
     getPostBySlug(slug).catch(() => null),
     getMostViewedPosts(5).catch(() => []),
     getCategories().catch(() => []),
     getWeatherConstanta().catch(() => null),
+    getLatestPosts(5).catch(() => []),
   ]);
 
   if (!post) notFound();
+
+  // Ultimele 4 articole, excluzând articolul curent
+  const ultimaOra = latestPosts.filter((p) => p.slug !== slug).slice(0, 4);
+
+  // Sparge HTML-ul după primul </p> pentru a insera "Ultima oră"
+  function splitAfterFirstParagraph(html: string): [string, string] {
+    const idx = html.indexOf("</p>");
+    if (idx === -1) return [html, ""];
+    return [html.slice(0, idx + 4), html.slice(idx + 4)];
+  }
+  const [firstPara, restContent] = splitAfterFirstParagraph(post.content);
 
   const category = post.categories?.nodes?.[0];
   const articleUrl = `${SITE_URL}/articol/${slug}`;
@@ -100,39 +156,30 @@ export default async function ArticlePage({ params }: Props) {
         .catch(() => [])
     : [];
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "NewsArticle",
-    headline: post.title,
-    description: post.excerpt.replace(/<[^>]*>/g, ""),
-    image: post.featuredImage?.node?.sourceUrl,
+  const cleanTitle = post.title.replace(/<[^>]*>/g, "");
+  const authorName = post.author?.node?.name || "DottoTV";
+
+  const newsArticleSchema = buildNewsArticleSchema({
+    title: cleanTitle,
+    description: post.excerpt.replace(/<[^>]*>/g, "").slice(0, 160),
+    url: articleUrl,
+    imageUrl: post.featuredImage?.node?.sourceUrl,
     datePublished: post.date,
     dateModified: post.modified,
-    author: {
-      "@type": "Person",
-      name: post.author?.node?.name || "DottoTV",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "DottoTV",
-      url: "https://dottotv.ro",
-      logo: {
-        "@type": "ImageObject",
-        url: `${SITE_URL}/images/logo.png`,
-      },
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": articleUrl,
-    },
-  };
+    authorName,
+    content: post.content,
+  });
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Acasă", url: SITE_URL },
+    ...(category ? [{ name: category.name, url: `${SITE_URL}/${category.slug}` }] : []),
+    { name: cleanTitle.slice(0, 60), url: articleUrl },
+  ]);
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 
       <ReadingProgress />
 
@@ -222,7 +269,7 @@ export default async function ArticlePage({ params }: Props) {
                 <figure className="-mx-4 md:mx-0 mb-8 md:rounded-2xl overflow-hidden shadow-md">
                   <Image
                     src={post.featuredImage.node.sourceUrl}
-                    alt={post.featuredImage.node.altText || post.title}
+                    alt={buildAltText(post.featuredImage.node.altText, cleanTitle, category?.name)}
                     width={1200}
                     height={675}
                     className="w-full object-cover aspect-video"
@@ -236,7 +283,86 @@ export default async function ArticlePage({ params }: Props) {
 
               {/* Article body */}
               <div id="article-body" className="article-content">
-                <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                {/* Primul paragraf */}
+                <div dangerouslySetInnerHTML={{ __html: firstPara }} />
+
+                {/* ── Ultima oră ── */}
+                {ultimaOra.length > 0 && (
+                  <div
+                    className="not-prose my-5"
+                    style={{
+                      borderLeft: "3px solid #1565C0",
+                      backgroundColor: "#EEF4FF",
+                      borderRadius: "0 6px 6px 0",
+                      padding: "10px 12px",
+                    }}
+                  >
+                    <p className="text-[10px] font-bold uppercase tracking-widest mb-2"
+                      style={{ color: "#1565C0" }}>
+                      Ultima oră
+                    </p>
+                    <div>
+                      {ultimaOra.map((p, i) => {
+                        const img = p.featuredImage?.node?.sourceUrl;
+                        const date = new Date(p.date).toLocaleDateString("ro-RO", {
+                          day: "numeric",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        });
+                        return (
+                          <Link
+                            key={p.id}
+                            href={`/articol/${p.slug}`}
+                            className="flex items-center group"
+                            style={{ gap: 8, paddingTop: i === 0 ? 0 : 6, paddingBottom: 6, borderTop: i === 0 ? "none" : "1px solid #dbeafe" }}
+                          >
+                            <div style={{ width: 48, height: 48, flexShrink: 0, borderRadius: 4, overflow: "hidden", background: "#dbeafe" }}>
+                              {img ? (
+                                <Image
+                                  src={img}
+                                  alt={p.featuredImage?.node?.altText || p.title}
+                                  width={48}
+                                  height={48}
+                                  className="w-full h-full object-cover object-center"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <svg className="w-4 h-4" style={{ color: "#93c5fd" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <p
+                                className="line-clamp-2 font-semibold group-hover:underline"
+                                style={{ fontSize: 13, lineHeight: "1.35", color: "#1a1a1a", margin: 0 }}
+                                dangerouslySetInnerHTML={{ __html: p.title }}
+                              />
+                              <p style={{ fontSize: 10, color: "#7a90b0", margin: 0, marginTop: 2 }}>{date}</p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* EKARA — mobil only, după primul paragraf */}
+                <div className="lg:hidden my-5">
+                  <a href="#" rel="noopener noreferrer sponsored" aria-label="Publicitate EKARA" className="block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/ads/EKARA.webp"
+                      alt="Publicitate"
+                      className="w-full h-auto block rounded-lg"
+                    />
+                  </a>
+                </div>
+
+                {/* Restul articolului */}
+                <div dangerouslySetInnerHTML={{ __html: restContent }} />
               </div>
 
               {/* Ad after content */}

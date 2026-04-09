@@ -250,13 +250,9 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
 export async function getBreakingNews(): Promise<
   Pick<Post, "id" | "slug" | "title" | "date">[]
 > {
-  // Articolele marcate cu categoria "breaking-news" din WordPress
-  const { posts } = await getPostsByCategory("breaking-news", 8).catch(
-    () => ({ posts: [] as Post[], pageInfo: { hasNextPage: false, endCursor: "" } })
-  );
-  // Fallback la ultimele știri dacă categoria e goală
-  const source = posts.length > 0 ? posts : await getLatestPosts(6);
-  return source.slice(0, 8).map((p) => ({
+  // Ultimele 15 articole postate, indiferent de categorie
+  const posts = await getLatestPosts(15).catch(() => [] as Post[]);
+  return posts.map((p) => ({
     id: p.id,
     slug: p.slug,
     title: p.title,

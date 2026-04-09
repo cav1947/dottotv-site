@@ -10,6 +10,7 @@ interface Props {
   categories: Category[];
   weather: WeatherData | null;
   latestPosts?: Post[];
+  evenimentePosts?: Post[];
 }
 
 const CAT_COLORS: Record<string, string> = {
@@ -23,42 +24,48 @@ const CAT_COLORS: Record<string, string> = {
   interne: "bg-indigo-600",
 };
 
-export default function Sidebar({ mostViewed, categories, weather, latestPosts }: Props) {
+export default function Sidebar({ mostViewed, categories, weather, latestPosts, evenimentePosts }: Props) {
   return (
     <aside className="space-y-4">
       {/* Weather Widget */}
       {weather && <WeatherWidget weather={weather} />}
 
-      {/* Ad Banner Sidebar */}
-      <AdBanner slot="sidebar-top" width={300} height={250} />
+      {/* EKARA — sidebar banner */}
+      <a href="#" rel="noopener noreferrer sponsored" aria-label="Publicitate EKARA" className="block">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/ads/EKARA.webp"
+          alt="Publicitate"
+          className="w-full h-auto block rounded-lg"
+        />
+      </a>
 
-      {/* Top Citite */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
-        <div className="flex items-center gap-2 px-3 py-2.5 bg-brand-blue">
-          <svg className="w-4 h-4 text-white flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-          </svg>
-          <h3 className="font-bold text-white text-xs uppercase tracking-wider">🔥 Top Citite</h3>
-        </div>
-        <div className="divide-y divide-gray-100 dark:divide-gray-700">
-          {mostViewed.map((post, index) => (
-            <div key={post.id} className="flex gap-2.5 p-3 group hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
-              <span className={`flex-shrink-0 w-6 h-6 rounded text-white text-xs font-bold flex items-center justify-center ${index === 0 ? "bg-red-500" : index === 1 ? "bg-orange-500" : index === 2 ? "bg-yellow-500" : "bg-gray-400"}`}>
-                {index + 1}
-              </span>
-              <div className="flex-1 min-w-0">
+      {/* Evenimente */}
+      {evenimentePosts && evenimentePosts.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
+          <div className="flex items-center gap-2 px-3 py-2.5 bg-brand-blue">
+            <svg className="w-4 h-4 text-white flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <h3 className="font-bold text-white text-xs uppercase tracking-wider">Evenimente</h3>
+          </div>
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+            {evenimentePosts.map((post) => (
+              <div key={post.id} className="p-3 group hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
                 <Link href={`/articol/${post.slug}`}>
-                  <h4 className="text-xs font-semibold text-gray-800 dark:text-gray-200 group-hover:text-brand-blue line-clamp-2 leading-snug transition-colors"
-                    dangerouslySetInnerHTML={{ __html: post.title }} />
+                  <h4
+                    className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-brand-blue line-clamp-2 leading-snug transition-colors"
+                    dangerouslySetInnerHTML={{ __html: post.title }}
+                  />
                 </Link>
                 <p className="text-[10px] text-gray-400 mt-0.5">
-                  {new Date(post.date).toLocaleDateString("ro-RO", { day: "numeric", month: "short" })}
+                  {new Date(post.date).toLocaleDateString("ro-RO", { day: "numeric", month: "short", year: "numeric" })}
                 </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Categorii cu badge-uri colorate */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">

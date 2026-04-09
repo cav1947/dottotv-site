@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getLatestPosts } from "@/lib/wordpress";
 import AdBanner from "@/components/AdBanner";
-import IndigoPlayer from "@/components/IndigoPlayer";
+import HLSPlayerWrapper from "@/components/HLSPlayerWrapper";
 
 export const metadata: Metadata = {
   title: "LIVE TV - DottoTV",
@@ -34,7 +34,16 @@ const SCHEDULE = [
 
 function getCurrentShow(): { show: string; time: string; nextTime: string } {
   const now = new Date();
-  const cur = now.getHours() * 60 + now.getMinutes();
+  const parts = new Intl.DateTimeFormat("ro-RO", {
+    timeZone: "Europe/Bucharest",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(now);
+  const hour = parseInt(parts.find((p) => p.type === "hour")?.value ?? "0", 10);
+  const minute = parseInt(parts.find((p) => p.type === "minute")?.value ?? "0", 10);
+  const cur = hour * 60 + minute;
+
   let idx = 0;
   for (let i = 0; i < SCHEDULE.length; i++) {
     const [h, m] = SCHEDULE[i].time.split(":").map(Number);
@@ -82,7 +91,7 @@ export default async function LivePage() {
 
           {/* Player */}
           <div className="rounded-2xl overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-white/10">
-            <IndigoPlayer />
+            <HLSPlayerWrapper />
           </div>
 
           {/* Emisiunea curentă */}
