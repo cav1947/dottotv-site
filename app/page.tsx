@@ -107,7 +107,6 @@ export default async function HomePage() {
   return (
     <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
     <div className="bg-gray-100 dark:bg-gray-950 min-h-screen">
 
       {/* MOBILE: carousel full-width, în afara containerului */}

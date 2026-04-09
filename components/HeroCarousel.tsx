@@ -108,7 +108,7 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
             <div className="absolute bottom-16 left-0 right-0 px-5 pb-4 pt-20">
               <Link href={`/articol/${post.slug}`}>
                 <h2
-                  className="text-white font-bold text-[24px] leading-snug"
+                  className="text-white font-bold text-[30px] leading-snug"
                   dangerouslySetInnerHTML={{ __html: post.title }}
                 />
               </Link>

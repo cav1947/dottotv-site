@@ -54,7 +54,8 @@
 }
 
 /* Ticker animation — keyframes defined in tailwind.config.ts (uses translateX(100%)) */
-.animate-ticker:hover {
+.animate-ticker:hover,
+.animate-ticker-fast:hover {
   animation-play-state: paused;
 }
 

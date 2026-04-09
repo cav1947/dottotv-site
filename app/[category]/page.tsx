@@ -54,12 +54,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: catUrl,
       type: "website",
       locale: "ro_RO",
+      images: [{ url: `${SITE_URL}/images/og-default.jpg`, width: 1200, height: 630, alt: `${category.name} | DOTTO TV` }],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       site: "@dottotv",
       title: `${category.name} | DOTTO TV`,
       description: desc,
+      images: [`${SITE_URL}/images/og-default.jpg`],
     },
   };
 }

@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: blob: https:",
               "media-src 'self' blob: https://live.dottotv.ro",
               "connect-src 'self' https://live.dottotv.ro https://dottotv.ro",
-              "frame-src 'self' https://www.google.com",
+              "frame-src 'self' https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com",
               "worker-src 'self' blob:",
             ].join("; "),
           },

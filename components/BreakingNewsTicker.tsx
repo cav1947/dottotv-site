@@ -27,7 +27,7 @@ export default function BreakingNewsTicker({ posts }: Props) {
 
         {/* Ticker scroll */}
         <div className="overflow-hidden flex-1 relative py-1">
-          <div className="flex items-center animate-ticker whitespace-nowrap">
+          <div className="flex items-center animate-ticker-fast md:animate-ticker whitespace-nowrap">
             {items.map((post, i) => (
               <span key={`${post.id}-${i}`} className="inline-flex items-center">
                 <Link
