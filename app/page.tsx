@@ -1,8 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import ArticleCard from "@/components/ArticleCard";
 import HeroCarousel from "@/components/HeroCarousel";
 import Sidebar from "@/components/Sidebar";
-import AdBanner from "@/components/AdBanner";
 import ScrollReveal from "@/components/ScrollReveal";
 import ParallaxBanner from "@/components/ParallaxBanner";
 import {
@@ -119,7 +119,7 @@ export default async function HomePage() {
           className="mb-4 flex justify-center items-center py-2 rounded-xl"
           style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f7ff 100%)" }}
         >
-          <a href="#" rel="noopener noreferrer sponsored" aria-label="Publicitate VIVO CT" className="block w-full md:w-auto md:flex-shrink-0">
+          <a href="https://vivo-shopping.com/ro/constanta" target="_blank" rel="noopener noreferrer sponsored" aria-label="Publicitate VIVO CT" className="block w-full md:w-auto md:flex-shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/ads/VIVO_CT_LOCAL-DISPLAY_728x90px.gif"
@@ -163,7 +163,7 @@ export default async function HomePage() {
           className="mb-4 flex justify-center items-center py-2 rounded-xl"
           style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f7ff 100%)" }}
         >
-          <a href="#" rel="noopener noreferrer sponsored" aria-label="Publicitate Confort Urban" className="block w-full md:w-auto md:flex-shrink-0">
+          <a href="https://conforturban-ct.ro/" target="_blank" rel="noopener noreferrer sponsored" aria-label="Publicitate Confort Urban" className="block w-full md:w-auto md:flex-shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/ads/Confort%20urban728x90.webp"
@@ -334,9 +334,62 @@ export default async function HomePage() {
               </Link>
             </ScrollReveal>
 
-            {/* ── BOTTOM AD ── */}
+            {/* ── BANNER SANSELO ── */}
             <ScrollReveal delay={200}>
-              <AdBanner slot="homepage-bottom" width={970} height={90} />
+              <a
+                href="https://www.sanselo.com"
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                aria-label="Publicitate Sanselo"
+                className="block group"
+              >
+                <div className="relative rounded-xl overflow-hidden" style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #111827 50%, #0d1117 100%)" }}>
+                  {/* Decorative blobs */}
+                  <div className="absolute -left-8 -top-8 w-40 h-40 rounded-full opacity-20" style={{ background: "radial-gradient(circle, #2ea3f2, transparent)" }} />
+                  <div className="absolute right-1/3 -bottom-10 w-32 h-32 rounded-full opacity-10" style={{ background: "radial-gradient(circle, #2ea3f2, transparent)" }} />
+
+                  <div className="relative flex flex-col sm:flex-row items-center gap-4 sm:gap-6 px-6 py-5 sm:py-4">
+
+                    {/* Logo */}
+                    <div className="flex-shrink-0">
+                      <Image
+                        src="/sanselo_logo.png"
+                        alt="Sanselo Web Solutions"
+                        width={160}
+                        height={48}
+                        className="object-contain"
+                        style={{ filter: "brightness(1.1)" }}
+                      />
+                    </div>
+
+                    {/* Divider */}
+                    <div className="hidden sm:block w-px h-10 bg-white/10 flex-shrink-0" />
+
+                    {/* Tagline + services */}
+                    <div className="flex-1 text-center sm:text-left">
+                      <p className="text-white font-bold text-sm sm:text-base leading-tight">
+                        The Future of your Business
+                      </p>
+                      <div className="flex flex-wrap justify-center sm:justify-start gap-x-3 gap-y-0.5 mt-1">
+                        {["Web Design", "Mobile Apps", "UX/UI", "Branding", "Marketing Digital"].map((s) => (
+                          <span key={s} className="text-[10px] text-white/50 font-medium">{s}</span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* CTA */}
+                    <div className="flex-shrink-0 flex flex-col items-center sm:items-end gap-1">
+                      <span
+                        className="px-5 py-2 rounded-lg text-white font-bold text-sm transition-all group-hover:brightness-110 group-hover:scale-105"
+                        style={{ background: "#2ea3f2" }}
+                      >
+                        Descoperă →
+                      </span>
+                      <span className="text-[9px] text-white/30 uppercase tracking-wider">publicitate</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
             </ScrollReveal>
           </div>
 

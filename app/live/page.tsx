@@ -122,10 +122,10 @@ export default async function LivePage() {
           CONȚINUT — program + știri
       ═══════════════════════════════════════ */}
       <div className="container mx-auto px-4 max-w-[1200px] py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8">
+        <div className="flex flex-col items-center gap-8">
 
-          {/* ── PROGRAM TV ── */}
-          <section>
+          {/* ── PROGRAM TV — ascuns temporar, se reactivează la integrarea cu Excel ── */}
+          <section className="hidden">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-1 h-6 bg-brand-blue rounded-full" />
               <h2 className="font-playfair font-bold text-xl text-gray-900 dark:text-white">
@@ -191,7 +191,7 @@ export default async function LivePage() {
           </section>
 
           {/* ── SIDEBAR — Ultimele știri ── */}
-          <aside>
+          <aside className="w-full max-w-lg">
             <div className="sticky top-20">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-1 h-6 bg-red-500 rounded-full" />

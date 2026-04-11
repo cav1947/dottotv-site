@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 interface Props {
   slot: string;
   width: number;
@@ -15,6 +17,7 @@ type Theme = {
   tagline: string;
   sub: string;
   cta: string;
+  ctaHref?: string;
 };
 
 const THEMES: Record<string, Theme> = {
@@ -65,6 +68,24 @@ const THEMES: Record<string, Theme> = {
     tagline: "Livrare mâncare în Constanța",
     sub: "Peste 50 restaurante partenere",
     cta: "Comandă acum",
+  },
+  "article-pre-content": {
+    gradient: "linear-gradient(135deg, #1e3a8a 0%, #1565C0 55%, #0891b2 100%)",
+    brand: "DOTTO TV",
+    initials: "DT",
+    tagline: "Promovează-ți afacerea pe DOTTO TV",
+    sub: "Spoturi TV · Bannere online · Advertoriale",
+    cta: "Contactează-ne",
+    ctaHref: "/publicitate",
+  },
+  "article-post-content": {
+    gradient: "linear-gradient(135deg, #1e3a8a 0%, #1565C0 55%, #0891b2 100%)",
+    brand: "DOTTO TV",
+    initials: "DT",
+    tagline: "Ajungeți la audiența din Constanța și Dobrogea",
+    sub: "TV · Online · Social Media · Evenimente",
+    cta: "Contactează-ne",
+    ctaHref: "/publicitate",
   },
 };
 
@@ -119,9 +140,15 @@ function HorizontalBanner({ theme, height }: { theme: Theme; height: number }) {
         <p className="text-white/60 text-[10px] truncate">{theme.tagline}</p>
       </div>
       <div className="flex-shrink-0 flex flex-col items-end gap-1 z-10">
-        <button className="bg-white/25 hover:bg-white/35 border border-white/40 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
-          {theme.cta} →
-        </button>
+        {theme.ctaHref ? (
+          <Link href={theme.ctaHref} className="bg-white/25 hover:bg-white/35 border border-white/40 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+            {theme.cta} →
+          </Link>
+        ) : (
+          <button className="bg-white/25 hover:bg-white/35 border border-white/40 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+            {theme.cta} →
+          </button>
+        )}
         <span className="text-white/40 text-[9px] uppercase tracking-wider">publicitate</span>
       </div>
     </div>
@@ -145,9 +172,15 @@ function RectangleBanner({ theme }: { theme: Theme }) {
         <p className="text-white font-semibold text-sm leading-snug">{theme.tagline}</p>
       </div>
 
-      <button className="z-10 bg-white text-gray-900 font-black text-sm px-6 py-2.5 rounded-full hover:bg-gray-100 transition-colors shadow-lg w-full">
-        {theme.cta} →
-      </button>
+      {theme.ctaHref ? (
+        <Link href={theme.ctaHref} className="z-10 bg-white text-gray-900 font-black text-sm px-6 py-2.5 rounded-full hover:bg-gray-100 transition-colors shadow-lg w-full text-center">
+          {theme.cta} →
+        </Link>
+      ) : (
+        <button className="z-10 bg-white text-gray-900 font-black text-sm px-6 py-2.5 rounded-full hover:bg-gray-100 transition-colors shadow-lg w-full">
+          {theme.cta} →
+        </button>
+      )}
     </div>
   );
 }
@@ -194,9 +227,15 @@ function TallBanner({ theme }: { theme: Theme }) {
       {/* Bottom CTA */}
       <div className="z-10 w-full mt-auto pb-8 pt-8">
         <p className="text-white/80 text-sm mb-4">Primul pas e gratuit</p>
-        <button className="bg-white text-gray-900 font-black text-sm px-8 py-3 rounded-full hover:bg-gray-100 transition-colors shadow-xl w-full">
-          {theme.cta} →
-        </button>
+        {theme.ctaHref ? (
+          <Link href={theme.ctaHref} className="bg-white text-gray-900 font-black text-sm px-8 py-3 rounded-full hover:bg-gray-100 transition-colors shadow-xl w-full text-center block">
+            {theme.cta} →
+          </Link>
+        ) : (
+          <button className="bg-white text-gray-900 font-black text-sm px-8 py-3 rounded-full hover:bg-gray-100 transition-colors shadow-xl w-full">
+            {theme.cta} →
+          </button>
+        )}
         <p className="text-white/40 text-[10px] mt-3">dottotv.ro · publicitate</p>
       </div>
     </div>

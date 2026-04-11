@@ -146,7 +146,7 @@ export default async function CategoryPage({ params }: Props) {
 
         {/* Ad top */}
         <div className="mb-8">
-          <AdBanner slot={`category-${categorySlug}-top`} width={728} height={90} />
+          <AdBanner slot="article-pre-content" width={728} height={90} />
         </div>
 
         {/* Grid cu infinite scroll */}

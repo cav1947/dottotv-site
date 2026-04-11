@@ -351,7 +351,7 @@ export default async function ArticlePage({ params }: Props) {
 
                 {/* EKARA — mobil only, după primul paragraf */}
                 <div className="lg:hidden my-5">
-                  <a href="#" rel="noopener noreferrer sponsored" aria-label="Publicitate EKARA" className="block">
+                  <a href="https://ekara.ro/" target="_blank" rel="noopener noreferrer sponsored" aria-label="Publicitate EKARA" className="block">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/ads/EKARA.webp"
