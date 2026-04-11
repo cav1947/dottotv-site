@@ -22,7 +22,8 @@
       "Bash(npm install:*)",
       "WebFetch(domain:www.sanselo.com)",
       "WebSearch",
-      "WebFetch(domain:viadobrogetica.ro)"
+      "WebFetch(domain:viadobrogetica.ro)",
+      "WebFetch(domain:dottotv.ro)"
     ]
   }
 }

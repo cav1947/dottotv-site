@@ -1,12 +1,16 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import Providers from "./providers";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import CookieBanner from "@/components/CookieBanner";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { getCategories, getBreakingNews } from "@/lib/wordpress";
 import { organizationSchema, SITE_URL } from "@/lib/seo";
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? "";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -97,12 +101,31 @@ export default async function RootLayout({
         />
       </head>
       <body>
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_ID}', { page_path: window.location.pathname });
+              `}
+            </Script>
+          </>
+        )}
         <Providers>
           <Header categories={categories} />
           {breakingNews.length > 0 && <BreakingNewsTicker posts={breakingNews} />}
-          <main className="min-h-screen">{children}</main>
+          <main className="min-h-screen">
+            {children}
+          </main>
           <Footer />
           <CookieBanner />
+          {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
         </Providers>
       </body>
     </html>
