@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 
-const STREAM_URL = "https://live.dottotv.ro/index.m3u8";
+const STREAM_URL = process.env.NEXT_PUBLIC_LIVE_STREAM_URL ?? "https://live.dottotv.ro/index.m3u8";
 
 export default function HLSPlayer() {
   const videoRef = useRef<HTMLVideoElement>(null);

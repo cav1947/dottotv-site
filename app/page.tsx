@@ -12,7 +12,7 @@ import {
   getPostsByCategory,
 } from "@/lib/wordpress";
 import { getWeatherConstanta } from "@/lib/weather";
-import { websiteSchema, organizationSchema, SITE_URL } from "@/lib/seo";
+import { websiteSchema, SITE_URL } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

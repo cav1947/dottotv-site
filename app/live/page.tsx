@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getLatestPosts } from "@/lib/wordpress";
-import AdBanner from "@/components/AdBanner";
 import HLSPlayerWrapper from "@/components/HLSPlayerWrapper";
 
 export const metadata: Metadata = {
@@ -16,45 +15,6 @@ export const metadata: Metadata = {
 
 export const revalidate = 60;
 
-// ── Program TV ────────────────────────────────────────────────────────────────
-const SCHEDULE = [
-  { time: "06:00", show: "Bună dimineața, Constanța!" },
-  { time: "08:00", show: "Știri DottoTV" },
-  { time: "09:00", show: "Dobrogea Azi" },
-  { time: "10:00", show: "Oameni și Locuri" },
-  { time: "12:00", show: "Știri de Prânz" },
-  { time: "13:00", show: "Județul Constanța" },
-  { time: "15:00", show: "Interviuri Exclusive" },
-  { time: "17:00", show: "Știri de Seară" },
-  { time: "19:00", show: "Principalul Jurnal" },
-  { time: "20:00", show: "DottoTV Special" },
-  { time: "21:00", show: "Dezbatere Publică" },
-  { time: "23:00", show: "Ultimele Știri" },
-];
-
-function getCurrentShow(): { show: string; time: string; nextTime: string } {
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat("ro-RO", {
-    timeZone: "Europe/Bucharest",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).formatToParts(now);
-  const hour = parseInt(parts.find((p) => p.type === "hour")?.value ?? "0", 10);
-  const minute = parseInt(parts.find((p) => p.type === "minute")?.value ?? "0", 10);
-  const cur = hour * 60 + minute;
-
-  let idx = 0;
-  for (let i = 0; i < SCHEDULE.length; i++) {
-    const [h, m] = SCHEDULE[i].time.split(":").map(Number);
-    if (h * 60 + m <= cur) idx = i;
-  }
-  return {
-    ...SCHEDULE[idx],
-    nextTime: SCHEDULE[(idx + 1) % SCHEDULE.length].time,
-  };
-}
-
 function timeAgo(dateString: string): string {
   const diff = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
   if (diff < 3600) return `acum ${Math.floor(diff / 60)} min`;
@@ -63,11 +23,7 @@ function timeAgo(dateString: string): string {
 }
 
 export default async function LivePage() {
-  const [latestPosts] = await Promise.all([
-    getLatestPosts(5).catch(() => []),
-  ]);
-
-  const current = getCurrentShow();
+  const latestPosts = await getLatestPosts(5).catch(() => []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -94,27 +50,6 @@ export default async function LivePage() {
             <HLSPlayerWrapper />
           </div>
 
-          {/* Emisiunea curentă */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mt-4 px-1">
-            <div className="flex items-center gap-3">
-              <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse flex-shrink-0" />
-              <div>
-                <p className="text-white font-semibold text-base leading-none">
-                  {current.show}
-                </p>
-                <p className="text-gray-400 text-xs mt-1">
-                  Până la {current.nextTime}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 text-xs text-gray-400">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
-                Transmisie 24/7
-              </span>
-              <span>📍 Constanța, România</span>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -123,72 +58,6 @@ export default async function LivePage() {
       ═══════════════════════════════════════ */}
       <div className="container mx-auto px-4 max-w-[1200px] py-8">
         <div className="flex flex-col items-center gap-8">
-
-          {/* ── PROGRAM TV — ascuns temporar, se reactivează la integrarea cu Excel ── */}
-          <section className="hidden">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-1 h-6 bg-brand-blue rounded-full" />
-              <h2 className="font-playfair font-bold text-xl text-gray-900 dark:text-white">
-                Program TV — Astăzi
-              </h2>
-            </div>
-
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden shadow-sm">
-              {SCHEDULE.map((item, i) => {
-                const isCurrent = item.time === current.time;
-                return (
-                  <div
-                    key={i}
-                    className={`flex items-center gap-4 px-5 py-3.5 border-b border-gray-100 dark:border-gray-800 last:border-0 transition-colors ${
-                      isCurrent
-                        ? "bg-brand-blue text-white"
-                        : "hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                    }`}
-                  >
-                    {/* Ora */}
-                    <span
-                      className={`font-mono font-bold text-sm w-12 flex-shrink-0 ${
-                        isCurrent ? "text-white" : "text-brand-blue dark:text-brand-blue-light"
-                      }`}
-                    >
-                      {item.time}
-                    </span>
-
-                    {/* Linie separator */}
-                    <div
-                      className={`w-px h-8 flex-shrink-0 ${
-                        isCurrent ? "bg-white/30" : "bg-gray-200 dark:bg-gray-700"
-                      }`}
-                    />
-
-                    {/* Emisiune */}
-                    <span
-                      className={`font-medium text-sm flex-1 ${
-                        isCurrent
-                          ? "text-white"
-                          : "text-gray-800 dark:text-gray-200"
-                      }`}
-                    >
-                      {item.show}
-                    </span>
-
-                    {/* Badge ACUM */}
-                    {isCurrent && (
-                      <span className="flex items-center gap-1.5 text-white text-xs font-bold bg-white/20 px-2.5 py-1 rounded-full flex-shrink-0">
-                        <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                        ACUM
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Ad */}
-            <div className="mt-6">
-              <AdBanner slot="live-page-mid" width={728} height={90} />
-            </div>
-          </section>
 
           {/* ── SIDEBAR — Ultimele știri ── */}
           <aside className="w-full max-w-lg">

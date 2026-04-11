@@ -1,19 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["192.168.68.107", "10.111.0.10"],
-  async rewrites() {
-    // Condiție anti-buclă: rewrite-ul se aplică doar când header-ul
-    // x-forwarded-host lipsește (request original, nu deja proxiat)
-    const noLoop = { missing: [{ type: "header" as const, key: "x-forwarded-host" }] };
-    return [
-      { source: "/wp-json/:path*",    destination: "https://dottotv.ro/wp-json/:path*",    ...noLoop },
-      { source: "/wp-admin/:path*",   destination: "https://dottotv.ro/wp-admin/:path*",   ...noLoop },
-      { source: "/wp-login.php",      destination: "https://dottotv.ro/wp-login.php",      ...noLoop },
-      { source: "/wp-content/:path*", destination: "https://dottotv.ro/wp-content/:path*", ...noLoop },
-      { source: "/wp-includes/:path*",destination: "https://dottotv.ro/wp-includes/:path*",...noLoop },
-    ];
-  },
   async headers() {
     return [
       {

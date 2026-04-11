@@ -145,10 +145,6 @@ export async function getLatestPosts(first = 12): Promise<Post[]> {
   return (data.posts?.nodes ?? []).map(normalizePost);
 }
 
-export async function getFeaturedPosts(first = 5): Promise<Post[]> {
-  return getLatestPosts(first);
-}
-
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   const data = await gql<{ postBy: unknown }>(
     /* GraphQL */ `
