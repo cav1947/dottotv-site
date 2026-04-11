@@ -433,7 +433,7 @@ export default function PublicitatePage() {
           <div className="text-center mb-10">
             <SectionLabel>Distribuție TV</SectionLabel>
             <h2 className="font-playfair text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-              DOTTO TV în grila națională
+              DOTTO TV în grila locală
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mt-3 max-w-xl mx-auto">
               Disponibil pe toate rețelele majore de cablu și satelit din România.
@@ -694,7 +694,7 @@ export default function PublicitatePage() {
                   </div>
 
                   <h3 className="font-playfair text-2xl font-bold mb-0.5">Lina Tudor</h3>
-                  <p className="text-blue-200 text-sm font-medium mb-6">Director Publicitate · DOTTO TV</p>
+                  <p className="text-blue-200 text-sm font-medium mb-6">Director General · DOTTO TV</p>
 
                   <div className="space-y-4">
                     <a
@@ -712,20 +712,6 @@ export default function PublicitatePage() {
                       </div>
                     </a>
 
-                    <a
-                      href="tel:0749040137"
-                      className="flex items-center gap-3 group"
-                    >
-                      <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0 group-hover:bg-white/25 transition-colors">
-                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <div className="text-[10px] text-blue-200 uppercase tracking-wider font-semibold">Telefon</div>
-                        <div className="text-sm font-medium text-white group-hover:underline">0749 040 137</div>
-                      </div>
-                    </a>
                   </div>
                 </div>
               </div>

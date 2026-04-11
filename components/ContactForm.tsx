@@ -3,22 +3,28 @@
 import { useState } from "react";
 
 export default function ContactForm() {
-  const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [form, setForm] = useState({ nume: "", email: "", subiect: "", mesaj: "" });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("sending");
-    const mailtoUrl = `mailto:redactie@dottotv.ro?subject=${encodeURIComponent(form.subiect)}&body=${encodeURIComponent(`Nume: ${form.nume}\nEmail: ${form.email}\n\n${form.mesaj}`)}`;
-    window.location.href = mailtoUrl;
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, type: "contact" }),
+      });
+      if (!res.ok) throw new Error("server error");
       setStatus("sent");
       setForm({ nume: "", email: "", subiect: "", mesaj: "" });
-    }, 500);
+    } catch {
+      setStatus("error");
+    }
   }
 
   if (status === "sent") {
@@ -58,7 +64,6 @@ export default function ContactForm() {
             onChange={handleChange}
             placeholder="Numele dvs."
             className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all text-sm"
-            style={{ "--tw-ring-color": "#1565C0" } as React.CSSProperties}
             onFocus={(e) => { e.target.style.boxShadow = "0 0 0 2px #1565C0"; }}
             onBlur={(e) => { e.target.style.boxShadow = ""; }}
           />
@@ -117,6 +122,12 @@ export default function ContactForm() {
           onBlur={(e) => { e.target.style.boxShadow = ""; }}
         />
       </div>
+
+      {status === "error" && (
+        <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 px-4 py-3 rounded-xl">
+          A apărut o eroare. Vă rugăm să ne contactați direct la <a href="mailto:office@dottotv.ro" className="underline">office@dottotv.ro</a>.
+        </p>
+      )}
 
       <button
         type="submit"

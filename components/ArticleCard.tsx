@@ -25,23 +25,20 @@ function getCategoryColor(slug: string): string {
 function hasVideo(content: string): boolean {
   if (!content) return false;
   return (
-    content.includes("youtube.com/embed") ||
-    content.includes("youtu.be") ||
-    content.includes("youtube.com/watch") ||
-    content.includes("vimeo.com") ||
+    content.includes("<iframe") ||
+    content.includes("youtube") ||
+    content.includes("vimeo") ||
     content.includes("<video") ||
     content.includes("wp-block-video") ||
-    content.includes("wp-block-embed-youtube") ||
-    content.includes("wp-block-embed-vimeo") ||
-    content.includes("[video")
+    content.includes("wp-block-embed")
   );
 }
 
 function PlayIcon() {
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <div className="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center backdrop-blur-[2px]">
-        <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+      <div className="w-14 h-14 rounded-full bg-white/70 flex items-center justify-center backdrop-blur-sm shadow-md">
+        <svg className="w-6 h-6 text-gray-900 ml-1" fill="currentColor" viewBox="0 0 24 24">
           <path d="M8 5v14l11-7z" />
         </svg>
       </div>
@@ -71,6 +68,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
   const imageUrl = post.featuredImage?.node?.sourceUrl;
   const imageAlt = post.featuredImage?.node?.altText || post.title;
   const isVideo = hasVideo(post.content);
+
 
   /* ── LIST ── */
   if (variant === "list") {

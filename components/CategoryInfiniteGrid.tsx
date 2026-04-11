@@ -31,6 +31,30 @@ function getCatColor(slug: string) {
   return CATEGORY_COLORS[slug] ?? "bg-brand-blue";
 }
 
+function hasVideo(content: string): boolean {
+  if (!content) return false;
+  return (
+    content.includes("<iframe") ||
+    content.includes("youtube") ||
+    content.includes("vimeo") ||
+    content.includes("<video") ||
+    content.includes("wp-block-video") ||
+    content.includes("wp-block-embed")
+  );
+}
+
+function PlayIcon() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div className="w-14 h-14 rounded-full bg-white/70 flex items-center justify-center backdrop-blur-sm shadow-md">
+        <svg className="w-6 h-6 text-gray-900 ml-1" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 function timeAgo(dateString: string): string {
   const diff = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
   if (diff < 60) return "acum câteva secunde";
@@ -44,6 +68,7 @@ function ArticleGridCard({ post }: { post: Post }) {
   const category = post.categories?.nodes?.[0];
   const imageUrl = post.featuredImage?.node?.sourceUrl;
   const imageAlt = post.featuredImage?.node?.altText || post.title;
+  const isVideo = hasVideo(post.content);
 
   return (
     <article className="group bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg border border-gray-100 dark:border-gray-800 transition-all duration-300 hover:-translate-y-1 flex flex-col">
@@ -70,6 +95,7 @@ function ArticleGridCard({ post }: { post: Post }) {
             {category.name}
           </span>
         )}
+        {isVideo && <PlayIcon />}
       </Link>
 
       {/* Content */}
