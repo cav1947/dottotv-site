@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.68.107", "10.111.0.10"],
+  async rewrites() {
+    return [
+      { source: "/wp-admin", destination: "http://85.120.25.136/wp-admin" },
+      { source: "/wp-admin/:path*", destination: "http://85.120.25.136/wp-admin/:path*" },
+      { source: "/wp-login.php", destination: "http://85.120.25.136/wp-login.php" },
+      { source: "/wp-content/:path*", destination: "http://85.120.25.136/wp-content/:path*" },
+      { source: "/wp-includes/:path*", destination: "http://85.120.25.136/wp-includes/:path*" },
+    ];
+  },
   async headers() {
     return [
       {
