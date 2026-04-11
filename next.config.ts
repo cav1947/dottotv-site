@@ -54,6 +54,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "dottotv.ro", pathname: "/**" },
+      { protocol: "https", hostname: "admin.dottotv.ro", pathname: "/**" },
       { protocol: "https", hostname: "secure.gravatar.com", pathname: "/**" },
       { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
       { protocol: "https", hostname: "picsum.photos", pathname: "/**" },
