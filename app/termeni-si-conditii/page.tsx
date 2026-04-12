@@ -1,9 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Termeni și Condiții",
   description: "Termenii și condițiile de utilizare a platformei DottoTV, operată de S.C. DOTTO TV MEDIA SRL, CUI 46123400, Constanța.",
+  alternates: { canonical: `${SITE_URL}/termeni-si-conditii` },
+  openGraph: {
+    siteName: "DOTTO TV",
+    title: "Termeni și Condiții | DOTTO TV",
+    description: "Termenii și condițiile de utilizare a platformei DottoTV, operată de S.C. DOTTO TV MEDIA SRL, Constanța.",
+    url: `${SITE_URL}/termeni-si-conditii`,
+    type: "website",
+    locale: "ro_RO",
+    images: [{ url: `${SITE_URL}/images/og-default.jpg`, width: 1200, height: 630, alt: "DOTTO TV – Termeni și Condiții" }],
+  },
+  twitter: {
+    card: "summary",
+    site: "@dottotv",
+    title: "Termeni și Condiții | DOTTO TV",
+    description: "Termenii și condițiile de utilizare a platformei DottoTV.",
+  },
 };
 
 const ACCENT = "#1565C0";

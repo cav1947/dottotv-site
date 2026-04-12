@@ -1,10 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SITE_URL, organizationSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Despre Noi",
   description:
     "DOTTO TV a luat naștere în 2013 când a obținut licența CNA. Suntem televiziunea locală a județului Constanța, cu obiectivul de a deveni televiziune regională în Dobrogea.",
+  alternates: { canonical: `${SITE_URL}/despre-noi` },
+  openGraph: {
+    siteName: "DOTTO TV",
+    title: "Despre DOTTO TV – Televiziunea Dobrogei din 2013",
+    description: "DOTTO TV a luat naștere în 2013 când a obținut licența CNA. Suntem televiziunea locală a județului Constanța.",
+    url: `${SITE_URL}/despre-noi`,
+    type: "website",
+    locale: "ro_RO",
+    images: [{ url: `${SITE_URL}/images/og-default.jpg`, width: 1200, height: 630, alt: "Despre DOTTO TV – Televiziunea Dobrogei" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@dottotv",
+    title: "Despre DOTTO TV – Televiziunea Dobrogei",
+    description: "Din 2013, vocea Dobrogei. Televiziunea locală a județului Constanța cu licență CNA.",
+    images: [`${SITE_URL}/images/og-default.jpg`],
+  },
 };
 
 const ACCENT = "#1565C0";
@@ -112,7 +130,9 @@ const coverage = [
 
 export default function DespreNoiPage() {
   return (
-    <div className="bg-gray-50 dark:bg-gray-950 min-h-screen">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
+      <div className="bg-gray-50 dark:bg-gray-950 min-h-screen">
 
       {/* ── Hero ── */}
       <div className="relative overflow-hidden" style={{ backgroundColor: ACCENT }}>
@@ -582,5 +602,6 @@ export default function DespreNoiPage() {
       </section>
 
     </div>
+    </>
   );
 }

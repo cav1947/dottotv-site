@@ -1,10 +1,28 @@
 import type { Metadata } from "next";
 import ContactForm from "@/components/ContactForm";
 import SocialLinksGrid from "@/components/SocialLinksGrid";
+import { SITE_URL, localBusinessSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: "Contactați redacția DottoTV. Adresă: Bd. Aurel Vlaicu nr. 144, etaj 1, Constanța. Telefon: 0752 230 060. Email: redactie@dottotv.ro.",
+  alternates: { canonical: `${SITE_URL}/contact` },
+  openGraph: {
+    siteName: "DOTTO TV",
+    title: "Contact | DOTTO TV",
+    description: "Contactați redacția DottoTV. Bd. Aurel Vlaicu nr. 144, etaj 1, Constanța. Telefon: 0752 230 060. Email: redactie@dottotv.ro.",
+    url: `${SITE_URL}/contact`,
+    type: "website",
+    locale: "ro_RO",
+    images: [{ url: `${SITE_URL}/images/og-default.jpg`, width: 1200, height: 630, alt: "Contact DOTTO TV" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@dottotv",
+    title: "Contact | DOTTO TV",
+    description: "Contactați redacția DottoTV. Bd. Aurel Vlaicu nr. 144, etaj 1, Constanța.",
+    images: [`${SITE_URL}/images/og-default.jpg`],
+  },
 };
 
 const ACCENT = "#1565C0";
@@ -55,7 +73,9 @@ const contactInfo = [
 
 export default function ContactPage() {
   return (
-    <div className="bg-gray-50 dark:bg-gray-950 min-h-screen">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
+      <div className="bg-gray-50 dark:bg-gray-950 min-h-screen">
       {/* Hero */}
       <div className="relative overflow-hidden" style={{ backgroundColor: ACCENT }}>
         <div
@@ -173,5 +193,6 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

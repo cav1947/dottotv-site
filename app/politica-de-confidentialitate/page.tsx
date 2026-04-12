@@ -1,10 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Politică de Confidențialitate",
   description:
     "Politica de confidențialitate a platformei DottoTV, operată de S.C. DOTTO TV MEDIA SRL. Aflați cum colectăm, utilizăm și protejăm datele dvs. cu caracter personal.",
+  alternates: { canonical: `${SITE_URL}/politica-de-confidentialitate` },
+  openGraph: {
+    siteName: "DOTTO TV",
+    title: "Politică de Confidențialitate | DOTTO TV",
+    description: "Politica de confidențialitate a platformei DottoTV. Aflați cum colectăm, utilizăm și protejăm datele dvs. cu caracter personal.",
+    url: `${SITE_URL}/politica-de-confidentialitate`,
+    type: "website",
+    locale: "ro_RO",
+    images: [{ url: `${SITE_URL}/images/og-default.jpg`, width: 1200, height: 630, alt: "DOTTO TV – Politică de Confidențialitate" }],
+  },
+  twitter: {
+    card: "summary",
+    site: "@dottotv",
+    title: "Politică de Confidențialitate | DOTTO TV",
+    description: "Aflați cum colectăm, utilizăm și protejăm datele dvs. cu caracter personal pe DottoTV.",
+  },
 };
 
 const ACCENT = "#1565C0";

@@ -1,10 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Politică de Cookies",
   description:
     "Politica de cookies a platformei DottoTV. Aflați ce tipuri de cookie-uri folosim, de ce le folosim și cum le puteți gestiona.",
+  alternates: { canonical: `${SITE_URL}/politica-de-cookies` },
+  openGraph: {
+    siteName: "DOTTO TV",
+    title: "Politică de Cookies | DOTTO TV",
+    description: "Politica de cookies a platformei DottoTV. Aflați ce tipuri de cookie-uri folosim și cum le puteți gestiona.",
+    url: `${SITE_URL}/politica-de-cookies`,
+    type: "website",
+    locale: "ro_RO",
+    images: [{ url: `${SITE_URL}/images/og-default.jpg`, width: 1200, height: 630, alt: "DOTTO TV – Politică de Cookies" }],
+  },
+  twitter: {
+    card: "summary",
+    site: "@dottotv",
+    title: "Politică de Cookies | DOTTO TV",
+    description: "Aflați ce tipuri de cookie-uri folosim pe DottoTV și cum le puteți gestiona.",
+  },
 };
 
 const ACCENT = "#1565C0";

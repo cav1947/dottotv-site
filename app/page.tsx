@@ -25,8 +25,19 @@ export const metadata: Metadata = {
   },
   openGraph: {
     siteName: "DOTTO TV",
+    title: "DOTTO TV – Știri din Constanța și Dobrogea",
+    description: "Televiziunea locală a județului Constanța. Știri corecte, rapide și imparțiale din Dobrogea. Urmărește LIVE TV.",
+    url: SITE_URL,
     locale: "ro_RO",
     type: "website",
+    images: [{ url: `${SITE_URL}/images/og-default.jpg`, width: 1200, height: 630, alt: "DOTTO TV – Televiziunea Dobrogei" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@dottotv",
+    title: "DOTTO TV – Știri din Constanța și Dobrogea",
+    description: "Televiziunea locală a județului Constanța. Urmărește LIVE TV.",
+    images: [`${SITE_URL}/images/og-default.jpg`],
   },
 };
 

@@ -7,6 +7,22 @@ export const metadata: Metadata = {
   title: "Cariere — Alătură-te echipei DOTTO TV",
   description: "Vrei să lucrezi la o televiziune locală din Constanța? Descoperă pozițiile disponibile la DOTTO TV și aplică acum.",
   alternates: { canonical: `${SITE_URL}/cariere` },
+  openGraph: {
+    siteName: "DOTTO TV",
+    title: "Cariere | DOTTO TV",
+    description: "Vrei să lucrezi la o televiziune locală din Constanța? Descoperă pozițiile disponibile la DOTTO TV și aplică acum.",
+    url: `${SITE_URL}/cariere`,
+    type: "website",
+    locale: "ro_RO",
+    images: [{ url: `${SITE_URL}/images/og-default.jpg`, width: 1200, height: 630, alt: "Cariere DOTTO TV" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@dottotv",
+    title: "Cariere | DOTTO TV",
+    description: "Vrei să lucrezi la o televiziune locală din Constanța? Aplică la DOTTO TV.",
+    images: [`${SITE_URL}/images/og-default.jpg`],
+  },
 };
 
 const JOBS = [

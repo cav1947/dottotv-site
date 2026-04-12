@@ -146,4 +146,86 @@ export function buildAltText(
   return categoryName ? `${clean} – ${categoryName} | DOTTO TV` : `${clean} | DOTTO TV`;
 }
 
+// ─── LocalBusiness schema (pentru pagina Contact) ────────────────────────────
+
+export const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": `${SITE_URL}/#localbusiness`,
+  name: "DOTTO TV",
+  url: SITE_URL,
+  image: `${SITE_URL}/images/og-default.jpg`,
+  logo: `${SITE_URL}/Sigla-DOTTO-TV---alb.png`,
+  description:
+    "Televiziunea locală a județului Constanța. Știri corecte, rapide și imparțiale din Dobrogea.",
+  telephone: "+40752230060",
+  email: "redactie@dottotv.ro",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Bd. Aurel Vlaicu nr. 144, etaj 1",
+    addressLocality: "Constanța",
+    addressRegion: "Constanța",
+    postalCode: "900165",
+    addressCountry: "RO",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 44.18022,
+    longitude: 28.61802,
+  },
+  openingHoursSpecification: {
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    opens: "09:00",
+    closes: "18:00",
+  },
+  sameAs: [
+    "https://www.facebook.com/dottotv",
+    "https://x.com/DOTTOTV",
+    "https://www.instagram.com/dottotv.ro/",
+    "https://www.youtube.com/@DottoTV4K",
+    "https://www.tiktok.com/@dottotv.ro",
+    "https://www.linkedin.com/company/dotto-tv/",
+  ],
+};
+
+// ─── BroadcastService schema (pentru pagina Live) ────────────────────────────
+
+export const broadcastServiceSchema = {
+  "@context": "https://schema.org",
+  "@type": "BroadcastService",
+  name: "DOTTO TV LIVE",
+  url: `${SITE_URL}/live`,
+  description:
+    "Transmisie live DOTTO TV — știri în direct din Constanța și România.",
+  broadcastDisplayName: "DOTTO TV",
+  inLanguage: "ro-RO",
+  broadcaster: {
+    "@type": "Organization",
+    name: "DOTTO TV",
+    url: SITE_URL,
+  },
+};
+
+// ─── WebPage schema (pentru pagini statice: termeni, politici etc.) ───────────
+
+export function buildWebPageSchema(params: {
+  url: string;
+  name: string;
+  description: string;
+  dateModified?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${params.url}#webpage`,
+    url: params.url,
+    name: params.name,
+    description: params.description,
+    inLanguage: "ro-RO",
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    ...(params.dateModified && { dateModified: params.dateModified }),
+  };
+}
+
 export { SITE_URL, SITE_NAME };
