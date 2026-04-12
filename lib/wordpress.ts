@@ -10,9 +10,18 @@ export interface Post {
   modified: string;
   featuredImage: { node: { sourceUrl: string; altText: string } } | null;
   categories: { nodes: { id: string; name: string; slug: string }[] };
+  tags: { nodes: { id: string; name: string; slug: string }[] };
   author: { node: { name: string; avatar: { url: string } } };
   seo?: { title: string; metaDesc: string; focusKw: string };
   viewCount?: number;
+}
+
+export interface Tag {
+  id: string;
+  name: string;
+  slug: string;
+  count: number;
+  description: string;
 }
 
 export interface Category {
@@ -73,6 +82,13 @@ const POST_FIELDS = /* GraphQL */ `
         slug
       }
     }
+    tags {
+      nodes {
+        databaseId
+        name
+        slug
+      }
+    }
     author {
       node {
         name
@@ -102,6 +118,13 @@ function normalizePost(node: any): Post {
         id: String(c.databaseId),
         name: c.name,
         slug: c.slug,
+      })),
+    },
+    tags: {
+      nodes: (node.tags?.nodes ?? []).map((t: any) => ({
+        id: String(t.databaseId),
+        name: t.name,
+        slug: t.slug,
       })),
     },
     author: node.author ?? {
@@ -274,6 +297,75 @@ export async function getAllPostSlugs(): Promise<string[]> {
     `
   );
   return (data.posts?.nodes ?? []).map((n) => n.slug);
+}
+
+export async function getTagBySlug(slug: string): Promise<Tag | null> {
+  const data = await gql<{ tag: unknown }>(
+    /* GraphQL */ `
+      query GetTagBySlug($slug: ID!) {
+        tag(id: $slug, idType: SLUG) {
+          databaseId
+          name
+          slug
+          count
+          description
+        }
+      }
+    `,
+    { slug }
+  );
+  if (!data.tag) return null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const t = data.tag as any;
+  return {
+    id: String(t.databaseId),
+    name: t.name ?? "",
+    slug: t.slug ?? "",
+    count: t.count ?? 0,
+    description: t.description ?? "",
+  };
+}
+
+export async function getPostsByTag(
+  tagSlug: string,
+  first = 12,
+  after?: string
+): Promise<{
+  posts: Post[];
+  pageInfo: { hasNextPage: boolean; endCursor: string };
+}> {
+  const data = await gql<{
+    posts: { nodes: unknown[]; pageInfo: { hasNextPage: boolean; endCursor: string } };
+  }>(
+    /* GraphQL */ `
+      ${POST_FIELDS}
+      query GetPostsByTag($slug: String!, $first: Int!, $after: String) {
+        posts(
+          first: $first
+          after: $after
+          where: {
+            tagSlugIn: [$slug]
+            orderby: { field: DATE, order: DESC }
+            status: PUBLISH
+          }
+        ) {
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+          nodes {
+            ...PostFields
+          }
+        }
+      }
+    `,
+    { slug: tagSlug, first, after: after ?? null }
+  );
+
+  return {
+    posts: (data.posts?.nodes ?? []).map(normalizePost),
+    pageInfo: data.posts?.pageInfo ?? { hasNextPage: false, endCursor: "" },
+  };
 }
 
 export async function searchPosts(query: string, first = 10): Promise<Post[]> {

@@ -46,13 +46,14 @@ function PlayIcon() {
   );
 }
 
-function timeAgo(dateString: string): string {
-  const diff = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
-  if (diff < 60) return "acum câteva secunde";
-  if (diff < 3600) return `acum ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `acum ${Math.floor(diff / 3600)} ore`;
-  if (diff < 604800) return `acum ${Math.floor(diff / 86400)} zile`;
-  return new Date(dateString).toLocaleDateString("ro-RO", { day: "numeric", month: "short" });
+function formatDateTime(dateString: string): string {
+  return new Date(dateString).toLocaleDateString("ro-RO", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function CategoryBadge({ category }: { category: { name: string; slug: string } }) {
@@ -88,7 +89,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
             <h4 className="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-3 leading-snug mt-0.5 transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
           </Link>
-          <p className="text-[10px] text-gray-400 mt-1">{timeAgo(post.date)}</p>
+          <p className="text-[10px] text-gray-400 mt-1">{formatDateTime(post.date)}</p>
         </div>
       </article>
     );
@@ -112,7 +113,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
             <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-3 mt-0.5 leading-snug transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
           </Link>
-          <p className="hidden sm:block text-[10px] text-gray-400 mt-1">{timeAgo(post.date)}</p>
+          <p className="text-[10px] text-gray-400 mt-1">{formatDateTime(post.date)}</p>
         </div>
       </article>
     );
@@ -138,7 +139,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
             <h3 className="font-bold text-sm sm:text-base text-gray-800 dark:text-gray-200 group-hover:text-brand-blue line-clamp-3 leading-snug transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
           </Link>
-          <p className="hidden sm:block text-[10px] text-gray-400 mt-1.5">{timeAgo(post.date)}</p>
+          <p className="text-[10px] text-gray-400 mt-1.5">{formatDateTime(post.date)}</p>
         </div>
       </article>
     );
@@ -164,8 +165,8 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
             <h2 className="font-playfair font-bold text-[17px] sm:text-xl text-gray-900 dark:text-white group-hover:text-brand-blue line-clamp-3 leading-tight transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
           </Link>
-          <div className="hidden sm:flex items-center justify-between mt-3">
-            <span className="text-xs text-gray-400">{timeAgo(post.date)}</span>
+          <div className="flex items-center justify-between mt-3">
+            <span className="text-xs text-gray-400">{formatDateTime(post.date)}</span>
             {post.author && <span className="text-xs text-gray-400">{post.author.node.name}</span>}
           </div>
         </div>
@@ -197,7 +198,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
           <div className="hidden md:block text-sm text-gray-300 mt-2 line-clamp-3"
             dangerouslySetInnerHTML={{ __html: post.excerpt }} />
           <div className="flex items-center gap-3 mt-3">
-            <span className="text-xs text-gray-300">{timeAgo(post.date)}</span>
+            <span className="text-xs text-gray-300">{formatDateTime(post.date)}</span>
             {post.author && <span className="text-xs text-gray-400">• {post.author.node.name}</span>}
           </div>
         </div>
@@ -224,8 +225,8 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
           <h3 className="font-bold text-[17px] sm:text-base text-gray-800 dark:text-gray-200 group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-3 leading-snug transition-colors"
             dangerouslySetInnerHTML={{ __html: post.title }} />
         </Link>
-        <div className="hidden sm:flex items-center justify-between mt-2">
-          <span className="text-[10px] text-gray-400">{timeAgo(post.date)}</span>
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-[10px] text-gray-400">{formatDateTime(post.date)}</span>
           {post.author && <span className="text-[10px] text-gray-400">{post.author.node.name}</span>}
         </div>
       </div>

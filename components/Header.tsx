@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import ThemeToggle from "./ThemeToggle";
 import SearchOverlay from "./SearchOverlay";
 import type { Category } from "@/lib/wordpress";
@@ -14,6 +14,22 @@ interface Props {
 export default function Header({ categories }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      if (currentY > lastScrollY.current && currentY > 60 && !menuOpen) {
+        setHidden(true);
+      } else {
+        setHidden(false);
+      }
+      lastScrollY.current = currentY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [menuOpen]);
 
   const allowedSlugs = ["actualitate", "news", "interne", "externe", "sport", "politica", "sanatate"];
   const mainCategories = allowedSlugs
@@ -21,7 +37,7 @@ export default function Header({ categories }: Props) {
     .filter(Boolean) as typeof categories;
 
   return (
-    <header className="sticky top-0 z-50 shadow-md">
+    <header className={`sticky top-0 z-50 shadow-md transition-transform duration-300 ${hidden ? "-translate-y-full" : "translate-y-0"}`}>
       {/* Top bar */}
       <div className="bg-brand-blue dark:bg-brand-blue-dark">
         <div className="container mx-auto px-4">

@@ -191,18 +191,29 @@ export default async function ArticlePage({ params }: Props) {
             <article>
 
               {/* Breadcrumb */}
-              <nav className="flex items-center gap-1.5 text-xs text-gray-400 mb-5">
-                <Link href="/" className="hover:text-brand-blue transition-colors">Acasă</Link>
+              <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs text-gray-400 mb-5 flex-wrap">
+                <Link href="/" className="hover:text-brand-blue transition-colors flex items-center gap-1">
+                  <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                  Acasă
+                </Link>
                 {category && (
                   <>
-                    <span>/</span>
+                    <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                     <Link href={`/${category.slug}`} className="hover:text-brand-blue transition-colors">
                       {category.name}
                     </Link>
                   </>
                 )}
-                <span>/</span>
-                <span className="text-gray-300 dark:text-gray-600 line-clamp-1">Articol</span>
+                <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+                <span className="text-gray-500 dark:text-gray-400 truncate max-w-[200px] sm:max-w-sm">
+                  {cleanTitle.length > 55 ? cleanTitle.slice(0, 55) + "…" : cleanTitle}
+                </span>
               </nav>
 
               {/* Category badge */}
@@ -383,6 +394,29 @@ export default async function ArticlePage({ params }: Props) {
                       #{cat.name}
                     </Link>
                   ))}
+                </div>
+              )}
+
+              {/* Post tags */}
+              {post.tags?.nodes && post.tags.nodes.length > 0 && (
+                <div className="mt-5 pt-5 border-t border-gray-100 dark:border-gray-800">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-1.5">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    Tag-uri
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.nodes.map((tag) => (
+                      <Link
+                        key={tag.id}
+                        href={`/tag/${tag.slug}`}
+                        className="inline-flex items-center gap-1 text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-brand-blue hover:text-brand-blue dark:hover:border-brand-blue dark:hover:text-brand-blue text-gray-600 dark:text-gray-400 px-3 py-1.5 rounded-full transition-colors"
+                      >
+                        <span className="text-gray-400">#</span>{tag.name}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               )}
 

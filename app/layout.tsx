@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import CookieBanner from "@/components/CookieBanner";
+import BackToTop from "@/components/BackToTop";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { getCategories, getBreakingNews } from "@/lib/wordpress";
 import { organizationSchema, SITE_URL } from "@/lib/seo";
@@ -125,6 +126,7 @@ export default async function RootLayout({
           </main>
           <Footer />
           <CookieBanner />
+          <BackToTop />
           {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
         </Providers>
       </body>
