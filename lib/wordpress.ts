@@ -10,7 +10,7 @@ export interface Post {
   modified: string;
   featuredImage: { node: { sourceUrl: string; altText: string } } | null;
   categories: { nodes: { id: string; name: string; slug: string }[] };
-  tags: { nodes: { id: string; name: string; slug: string }[] };
+  tags?: { nodes: { id: string; name: string; slug: string }[] };
   author: { node: { name: string; avatar: { url: string } } };
   seo?: { title: string; metaDesc: string; focusKw: string };
   viewCount?: number;
