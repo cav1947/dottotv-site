@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 import {
   getPostBySlug,
   getAllPostSlugs,
-  getMostViewedPosts,
   getCategories,
   getPostsByCategory,
   getLatestPosts,
@@ -127,9 +126,8 @@ function formatDate(dateString: string): string {
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
 
-  const [post, mostViewed, categories, weather, latestPosts] = await Promise.all([
+  const [post, categories, weather, latestPosts] = await Promise.all([
     getPostBySlug(slug).catch(() => null),
-    getMostViewedPosts(5).catch(() => []),
     getCategories().catch(() => []),
     getWeatherConstanta().catch(() => null),
     getLatestPosts(5).catch(() => []),
@@ -439,7 +437,6 @@ export default async function ArticlePage({ params }: Props) {
             <aside>
               <div className="sticky top-20">
                 <Sidebar
-                  mostViewed={mostViewed}
                   categories={categories}
                   weather={weather}
                 />

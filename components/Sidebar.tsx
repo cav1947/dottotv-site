@@ -6,7 +6,6 @@ import type { Post, Category } from "@/lib/wordpress";
 import type { WeatherData } from "@/lib/weather";
 
 interface Props {
-  mostViewed: Post[];
   categories: Category[];
   weather: WeatherData | null;
   latestPosts?: Post[];
@@ -24,7 +23,7 @@ const CAT_COLORS: Record<string, string> = {
   interne: "bg-indigo-600",
 };
 
-export default function Sidebar({ mostViewed, categories, weather, latestPosts, evenimentePosts }: Props) {
+export default function Sidebar({ categories, weather, latestPosts, evenimentePosts }: Props) {
   return (
     <aside className="space-y-4">
       {/* Weather Widget */}

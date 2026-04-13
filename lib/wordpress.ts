@@ -13,7 +13,6 @@ export interface Post {
   tags?: { nodes: { id: string; name: string; slug: string }[] };
   author: { node: { name: string; avatar: { url: string } } };
   seo?: { title: string; metaDesc: string; focusKw: string };
-  viewCount?: number;
 }
 
 export interface Tag {
@@ -131,7 +130,6 @@ function normalizePost(node: any): Post {
       node: { name: "DottoTV", avatar: { url: "" } },
     },
     seo: node.seo ?? undefined,
-    viewCount: node.viewCount ?? undefined,
   };
 }
 
@@ -145,6 +143,8 @@ function normalizeCategory(node: any): Category {
     description: node.description ?? "",
   };
 }
+
+const EXCLUDED_CATEGORY_SLUGS = ["uncategorized", "necategorizat", "dotto-news", "breaking"];
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -244,7 +244,7 @@ export async function getCategories(): Promise<Category[]> {
   );
   return (data.categories?.nodes ?? [])
     .map(normalizeCategory)
-    .filter((cat) => cat.slug !== "uncategorized");
+    .filter((cat) => !EXCLUDED_CATEGORY_SLUGS.includes(cat.slug));
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
@@ -279,10 +279,6 @@ export async function getBreakingNews(): Promise<
   }));
 }
 
-export async function getMostViewedPosts(first = 5): Promise<Post[]> {
-  // WPGraphQL nu expune viewCount nativ; fallback la cele mai recente
-  return getLatestPosts(first);
-}
 
 export async function getAllPostSlugs(): Promise<string[]> {
   const data = await gql<{ posts: { nodes: { slug: string }[] } }>(

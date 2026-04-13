@@ -15,6 +15,7 @@ export default function robots(): MetadataRoute.Robots {
           "/wp-admin/",
           "/wp-login.php",
           "/cautare?*",
+          "/breaking",
         ],
       },
       {

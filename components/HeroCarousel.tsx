@@ -17,6 +17,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   interne: "bg-indigo-600",
 };
 
+const HIDDEN_SLUGS = ["uncategorized", "necategorizat", "dotto-news", "breaking"];
+
 function getCategoryColor(slug: string) {
   return CATEGORY_COLORS[slug] || "bg-brand-blue";
 }
@@ -47,7 +49,7 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
       style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
     >
       {posts.map((post, i) => {
-        const category = post.categories?.nodes?.[0];
+        const category = post.categories?.nodes?.find((c) => !HIDDEN_SLUGS.includes(c.slug));
         const imageUrl = post.featuredImage?.node?.sourceUrl;
         const imageAlt = post.featuredImage?.node?.altText || post.title;
 

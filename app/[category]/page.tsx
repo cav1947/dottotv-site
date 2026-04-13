@@ -42,7 +42,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${category.name} – Ultimele Știri | DOTTO TV`,
     description: desc,
-    robots: { index: true, follow: true },
+    robots: categorySlug === "breaking"
+      ? { index: false, follow: false }
+      : { index: true, follow: true },
     alternates: {
       canonical: catUrl,
       languages: { "ro-RO": catUrl },

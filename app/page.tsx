@@ -7,7 +7,6 @@ import ScrollReveal from "@/components/ScrollReveal";
 import ParallaxBanner from "@/components/ParallaxBanner";
 import {
   getLatestPosts,
-  getMostViewedPosts,
   getCategories,
   getPostsByCategory,
 } from "@/lib/wordpress";
@@ -67,23 +66,22 @@ function SectionHeader({ title, slug, color = "bg-brand-blue" }: { title: string
 }
 
 export default async function HomePage() {
-  const [allPosts, mostViewed, categories, weather, sportPosts, politicaPosts, sanatateaLaZiPosts, constanta, ,
-    externeLatest, interneLatest, utilitareLatest, culturaLatest, evenimentePosts] =
+  const [allPosts, categories, weather, sportPosts, politicaPosts, sanatateaLaZiPosts, constanta,
+    externeLatest, interneLatest, utilitareLatest, culturaLatest, evenimentePosts, breakingPosts] =
     await Promise.all([
       getLatestPosts(35).catch(() => []),
-      getMostViewedPosts(5).catch(() => []),
       getCategories().catch(() => []),
       getWeatherConstanta().catch(() => null),
       getPostsByCategory("sport", 5).catch(() => ({ posts: [] })),
       getPostsByCategory("politica", 5).catch(() => ({ posts: [] })),
       getPostsByCategory("sanatate", 4).catch(() => ({ posts: [] })),
       getPostsByCategory("constanta", 5).catch(() => ({ posts: [] })),
-      getPostsByCategory("externe", 4).catch(() => ({ posts: [] })),   // păstrat la același index, neutilizat
       getPostsByCategory("externe", 3).catch(() => ({ posts: [] })),
       getPostsByCategory("interne", 3).catch(() => ({ posts: [] })),
       getPostsByCategory("utilitare", 5).catch(() => ({ posts: [] })),
       getPostsByCategory("cultura", 1).catch(() => ({ posts: [] })),
       getPostsByCategory("evenimente", 5).catch(() => ({ posts: [] })),
+      getPostsByCategory("breaking", 10).catch(() => ({ posts: [] })),
     ]);
 
   // Elimină duplicate după id — același articol poate fi în mai multe categorii
@@ -103,17 +101,14 @@ export default async function HomePage() {
   const sanatateUnique     = dedup(sanatateaLaZiPosts.posts);
   const utilitareUnique    = dedup(utilitareLatest.posts);
 
-  const heroPost = uniquePosts[0];
-  const hero2 = uniquePosts[1];
-  const hero3 = uniquePosts[2];
-  const hero4 = uniquePosts[3];
-  const hero5 = uniquePosts[4];
-  const latestRow = uniquePosts.slice(5, 9);
-  const latestRow2 = uniquePosts.slice(9, 13);
+  const heroPosts = breakingPosts.posts.slice(0, 5);
 
-  const carouselPosts = [heroPost, hero2, hero3, hero4, hero5].filter(
-    (p): p is NonNullable<typeof p> => !!p
-  );
+  const heroPost = heroPosts[0];
+  const hero2 = heroPosts[1];
+  const hero3 = heroPosts[2];
+  const hero4 = heroPosts[3];
+  const hero5 = heroPosts[4];
+  const latestRow = uniquePosts.slice(5, 9);
 
   return (
     <>
@@ -121,7 +116,7 @@ export default async function HomePage() {
     <div className="bg-gray-100 dark:bg-gray-950 min-h-screen">
 
       {/* MOBILE: carousel full-width, în afara containerului */}
-      <HeroCarousel posts={carouselPosts} />
+      <HeroCarousel posts={heroPosts} />
 
       <div className="container mx-auto px-3 py-4 max-w-[1400px]">
 
@@ -408,7 +403,6 @@ export default async function HomePage() {
           <aside className="space-y-4">
             <div className="sticky top-20">
               <Sidebar
-                mostViewed={mostViewed}
                 categories={categories}
                 weather={weather}
                 latestPosts={uniquePosts.slice(0, 6)}

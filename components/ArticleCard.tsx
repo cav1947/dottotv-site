@@ -18,6 +18,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   interne: "bg-indigo-600",
 };
 
+const HIDDEN_SLUGS = ["uncategorized", "necategorizat", "dotto-news", "breaking"];
+
 function getCategoryColor(slug: string): string {
   return CATEGORY_COLORS[slug] || "bg-brand-blue";
 }
@@ -56,16 +58,16 @@ function formatDateTime(dateString: string): string {
   });
 }
 
-function CategoryBadge({ category }: { category: { name: string; slug: string } }) {
+function CategoryBadge({ category, className }: { category: { name: string; slug: string }; className?: string }) {
   return (
-    <span className={`inline-block ${getCategoryColor(category.slug)} text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide`}>
+    <span className={`${getCategoryColor(category.slug)} text-white font-bold rounded uppercase ${className ?? "inline-block text-[10px] px-2 py-0.5 tracking-wide"}`}>
       {category.name}
     </span>
   );
 }
 
 export default function ArticleCard({ post, variant = "medium" }: Props) {
-  const category = post.categories?.nodes?.[0];
+  const category = post.categories?.nodes?.find((c) => !HIDDEN_SLUGS.includes(c.slug));
   const imageUrl = post.featuredImage?.node?.sourceUrl;
   const imageAlt = post.featuredImage?.node?.altText || post.title;
   const isVideo = hasVideo(post.content);
@@ -126,11 +128,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
         {imageUrl && (
           <Link href={`/articol/${post.slug}`} className="block relative aspect-video overflow-hidden">
             <Image src={imageUrl} alt={imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 50vw, 25vw" />
-            {category && (
-              <span className={`absolute top-2 left-2 ${getCategoryColor(category.slug)} text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase`}>
-                {category.name}
-              </span>
-            )}
+            {category && <CategoryBadge category={category} className="absolute top-2 left-2 text-[10px] px-2 py-0.5" />}
             {isVideo && <PlayIcon />}
           </Link>
         )}
@@ -152,11 +150,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
         {imageUrl && (
           <Link href={`/articol/${post.slug}`} className="block relative aspect-video overflow-hidden">
             <Image src={imageUrl} alt={imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 50vw" />
-            {category && (
-              <span className={`absolute top-3 left-3 ${getCategoryColor(category.slug)} text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wide`}>
-                {category.name}
-              </span>
-            )}
+            {category && <CategoryBadge category={category} className="absolute top-3 left-3 text-xs px-3 py-1 tracking-wide" />}
             {isVideo && <PlayIcon />}
           </Link>
         )}
@@ -186,11 +180,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
         {isVideo && <PlayIcon />}
         <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
-          {category && (
-            <span className={`inline-block ${getCategoryColor(category.slug)} text-white text-xs font-bold px-3 py-1 rounded uppercase tracking-wide mb-3`}>
-              {category.name}
-            </span>
-          )}
+          {category && <CategoryBadge category={category} className="inline-block text-xs px-3 py-1 tracking-wide mb-3" />}
           <Link href={`/articol/${post.slug}`}>
             <h2 className="font-playfair font-bold text-[22px] md:text-3xl lg:text-4xl text-white group-hover:text-blue-200 line-clamp-3 leading-tight transition-colors"
               dangerouslySetInnerHTML={{ __html: post.title }} />
@@ -212,11 +202,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
       {imageUrl && (
         <Link href={`/articol/${post.slug}`} className="block relative aspect-video overflow-hidden">
           <Image src={imageUrl} alt={imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw" />
-          {category && (
-            <span className={`absolute top-2 left-2 ${getCategoryColor(category.slug)} text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wide`}>
-              {category.name}
-            </span>
-          )}
+          {category && <CategoryBadge category={category} className="absolute top-2 left-2 text-[10px] px-2 py-0.5 tracking-wide" />}
           {isVideo && <PlayIcon />}
         </Link>
       )}

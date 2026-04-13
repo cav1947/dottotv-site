@@ -37,7 +37,7 @@ export default function Header({ categories }: Props) {
     .filter(Boolean) as typeof categories;
 
   return (
-    <header className={`sticky top-0 z-50 shadow-md transition-transform duration-300 ${hidden ? "-translate-y-full" : "translate-y-0"}`}>
+    <header className={`fixed top-0 left-0 right-0 w-full z-50 shadow-md transition-transform duration-300 ${hidden ? "-translate-y-full" : "translate-y-0"}`}>
       {/* Top bar */}
       <div className="bg-brand-blue dark:bg-brand-blue-dark">
         <div className="container mx-auto px-4">

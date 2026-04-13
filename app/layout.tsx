@@ -120,6 +120,7 @@ export default async function RootLayout({
         )}
         <Providers>
           <Header categories={categories} />
+          <div className="h-16" aria-hidden="true" />
           {breakingNews.length > 0 && <BreakingNewsTicker posts={breakingNews} />}
           <main className="min-h-screen">
             {children}
