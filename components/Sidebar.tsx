@@ -57,9 +57,6 @@ export default function Sidebar({ categories, weather, latestPosts, evenimentePo
                     dangerouslySetInnerHTML={{ __html: post.title }}
                   />
                 </Link>
-                <p className="text-[10px] text-gray-400 mt-0.5">
-                  {new Date(post.date).toLocaleDateString("ro-RO", { day: "numeric", month: "short", year: "numeric" })}
-                </p>
               </div>
             ))}
           </div>

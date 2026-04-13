@@ -22,7 +22,7 @@ const config: Config = {
       },
       animation: {
         ticker: "ticker 30s linear infinite",
-        "ticker-fast": "ticker 15s linear infinite",
+        "ticker-fast": "ticker 9s linear infinite",
         "fade-in-up": "fadeInUp 0.5s ease-out forwards",
         "reveal-up": "revealUp 0.6s ease-out forwards",
       },

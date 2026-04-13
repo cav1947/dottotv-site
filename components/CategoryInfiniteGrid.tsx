@@ -55,15 +55,6 @@ function PlayIcon() {
   );
 }
 
-function timeAgo(dateString: string): string {
-  const diff = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
-  if (diff < 60) return "acum câteva secunde";
-  if (diff < 3600) return `acum ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `acum ${Math.floor(diff / 3600)} ore`;
-  if (diff < 604800) return `acum ${Math.floor(diff / 86400)} zile`;
-  return new Date(dateString).toLocaleDateString("ro-RO", { day: "numeric", month: "long", year: "numeric" });
-}
-
 function ArticleGridCard({ post }: { post: Post }) {
   const category = post.categories?.nodes?.[0];
   const imageUrl = post.featuredImage?.node?.sourceUrl;
@@ -127,9 +118,6 @@ function ArticleGridCard({ post }: { post: Post }) {
               {post.author?.node?.name ?? "DottoTV"}
             </span>
           </div>
-          <time className="text-xs text-gray-400 flex-shrink-0 ml-2" dateTime={post.date}>
-            {timeAgo(post.date)}
-          </time>
         </div>
       </div>
     </article>

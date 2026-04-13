@@ -16,17 +16,6 @@ interface Props {
   onClose: () => void;
 }
 
-function timeAgo(dateString: string): string {
-  const diff = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
-  if (diff < 3600) return `acum ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `acum ${Math.floor(diff / 3600)} ore`;
-  return new Date(dateString).toLocaleDateString("ro-RO", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
 export default function SearchOverlay({ onClose }: Props) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -197,12 +186,6 @@ export default function SearchOverlay({ onClose }: Props) {
                             {result.category.name}
                           </span>
                         )}
-                        {result.category && (
-                          <span className="text-gray-300 dark:text-gray-600 text-xs leading-none">·</span>
-                        )}
-                        <span className="text-[11px] text-gray-400 leading-none">
-                          {timeAgo(result.date)}
-                        </span>
                       </div>
                     </div>
 

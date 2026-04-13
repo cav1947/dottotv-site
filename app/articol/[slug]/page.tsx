@@ -313,12 +313,6 @@ export default async function ArticlePage({ params }: Props) {
                     <div>
                       {ultimaOra.map((p, i) => {
                         const img = p.featuredImage?.node?.sourceUrl;
-                        const date = new Date(p.date).toLocaleDateString("ro-RO", {
-                          day: "numeric",
-                          month: "short",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        });
                         return (
                           <Link
                             key={p.id}
@@ -349,7 +343,6 @@ export default async function ArticlePage({ params }: Props) {
                                 style={{ fontSize: 13, lineHeight: "1.35", color: "#1a1a1a", margin: 0 }}
                                 dangerouslySetInnerHTML={{ __html: p.title }}
                               />
-                              <p style={{ fontSize: 10, color: "#7a90b0", margin: 0, marginTop: 2 }}>{date}</p>
                             </div>
                           </Link>
                         );

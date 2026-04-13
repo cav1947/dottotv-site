@@ -101,7 +101,17 @@ export default async function HomePage() {
   const sanatateUnique     = dedup(sanatateaLaZiPosts.posts);
   const utilitareUnique    = dedup(utilitareLatest.posts);
 
-  const heroPosts = breakingPosts.posts.slice(0, 5);
+  // Logică sticky: dacă există un articol cu isSticky: true în breaking, îl punem primul
+  const breakingList = breakingPosts.posts;
+  const stickyIndex = breakingList.findIndex((p) => p.isSticky);
+  let heroPosts: typeof breakingList;
+  if (stickyIndex > 0) {
+    const sticky = breakingList[stickyIndex];
+    const rest = breakingList.filter((_, i) => i !== stickyIndex);
+    heroPosts = [sticky, ...rest].slice(0, 5);
+  } else {
+    heroPosts = breakingList.slice(0, 5);
+  }
 
   const heroPost = heroPosts[0];
   const hero2 = heroPosts[1];

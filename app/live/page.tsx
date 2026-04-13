@@ -32,13 +32,6 @@ export const metadata: Metadata = {
 // Revalidare la 30 de minute — sincronizat cu fetch-ul programului TV
 export const revalidate = 1800;
 
-function timeAgo(dateString: string): string {
-  const diff = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
-  if (diff < 3600) return `acum ${Math.floor(diff / 60)} min`;
-  if (diff < 86400) return `acum ${Math.floor(diff / 3600)} ore`;
-  return new Date(dateString).toLocaleDateString("ro-RO", { day: "numeric", month: "short" });
-}
-
 export default async function LivePage() {
   const [latestPosts, schedule] = await Promise.all([
     getLatestPosts(6).catch(() => []),
@@ -130,7 +123,6 @@ export default async function LivePage() {
                               dangerouslySetInnerHTML={{ __html: post.title }}
                             />
                           </Link>
-                          <p className="text-[11px] text-gray-400 mt-1.5">{timeAgo(post.date)}</p>
                         </div>
                       </article>
                     );

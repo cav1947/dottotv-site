@@ -8,6 +8,7 @@ export interface Post {
   content: string;
   date: string;
   modified: string;
+  isSticky?: boolean;
   featuredImage: { node: { sourceUrl: string; altText: string } } | null;
   categories: { nodes: { id: string; name: string; slug: string }[] };
   tags?: { nodes: { id: string; name: string; slug: string }[] };
@@ -68,6 +69,7 @@ const POST_FIELDS = /* GraphQL */ `
     content(format: RENDERED)
     date
     modified
+    isSticky
     featuredImage {
       node {
         sourceUrl
@@ -111,6 +113,7 @@ function normalizePost(node: any): Post {
     content: node.content ?? "",
     date: node.date ?? new Date().toISOString(),
     modified: node.modified ?? node.date ?? new Date().toISOString(),
+    isSticky: node.isSticky ?? false,
     featuredImage: node.featuredImage ?? null,
     categories: {
       nodes: (node.categories?.nodes ?? []).map((c: any) => ({
