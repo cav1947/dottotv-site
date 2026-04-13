@@ -180,7 +180,9 @@ function parseRows(rows: unknown[][]): DaySchedule[] {
           lastMatch = j;
           j++;
         } else if (names[j] === "") {
-          j++; // slot gol — continuăm să privim mai departe
+          // Slot gol = celulă fuzionată în Excel — face parte din blocul curent
+          lastMatch = j;
+          j++;
         } else {
           break; // altă emisiune nenulă — oprim
         }

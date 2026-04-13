@@ -335,7 +335,7 @@ export default async function HomePage() {
                       <span className="text-red-400 font-bold text-sm uppercase tracking-wider">Acum LIVE</span>
                     </div>
                     <h3 className="font-playfair font-bold text-2xl md:text-3xl">
-                      DottoTV în Direct
+                      DOTTO TV în direct
                     </h3>
                     <p className="text-gray-300 text-sm mt-1">
                       Urmărește știrile în direct din Constanța și România

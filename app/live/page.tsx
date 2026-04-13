@@ -56,7 +56,7 @@ export default async function LivePage() {
                 <span className="font-bold text-sm tracking-wide">LIVE</span>
               </div>
               <h1 className="font-playfair font-bold text-2xl md:text-3xl text-white">
-                DottoTV în Direct
+                DOTTO TV în direct
               </h1>
             </div>
 
