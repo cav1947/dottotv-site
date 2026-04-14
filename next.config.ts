@@ -16,14 +16,14 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://www.googletagmanager.com https://www.google-analytics.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://www.googletagmanager.com https://www.google-analytics.com https://cdn.onesignal.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https:",
               "media-src 'self' blob: https://live.dottotv.ro https://dottotv.ro",
-              "connect-src 'self' https://live.dottotv.ro https://dottotv.ro https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net",
-              "frame-src 'self' https://www.google.com https://www.youtube.com https://youtube.com https://www.youtube-nocookie.com https://youtube-nocookie.com https://www.facebook.com https://facebook.com https://www.instagram.com https://instagram.com https://www.tiktok.com https://tiktok.com https://www.twitter.com https://twitter.com https://www.x.com https://x.com https://player.vimeo.com https://vimeo.com https://www.dailymotion.com https://dailymotion.com https://player.twitch.tv https://www.twitch.tv",
-              "worker-src 'self' blob:",
+              "connect-src 'self' https://live.dottotv.ro https://dottotv.ro https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://onesignal.com https://*.onesignal.com",
+              "frame-src 'self' https://www.google.com https://www.youtube.com https://youtube.com https://www.youtube-nocookie.com https://youtube-nocookie.com https://www.facebook.com https://facebook.com https://www.instagram.com https://instagram.com https://www.tiktok.com https://tiktok.com https://www.twitter.com https://twitter.com https://www.x.com https://x.com https://player.vimeo.com https://vimeo.com https://www.dailymotion.com https://dailymotion.com https://player.twitch.tv https://www.twitch.tv https://onesignal.com https://*.onesignal.com",
+              "worker-src 'self' blob: https://cdn.onesignal.com",
             ].join("; "),
           },
           {
