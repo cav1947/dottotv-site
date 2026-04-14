@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 import SearchOverlay from "./SearchOverlay";
 import type { Category } from "@/lib/wordpress";
@@ -15,6 +16,9 @@ interface Props {
 }
 
 export default function Header({ categories, rates }: Props) {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -46,17 +50,35 @@ export default function Header({ categories, rates }: Props) {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex-shrink-0">
-              <Image
-                src="/Sigla-DOTTO-TV---alb.png"
-                alt="DottoTV"
-                height={120}
-                width={480}
-                className="h-24 md:h-[120px]"
-                style={{ width: "auto" }}
-                priority
-              />
-            </Link>
+            {isHome ? (
+              <button
+                onClick={() => window.location.reload()}
+                className="flex-shrink-0"
+                aria-label="Reîncarcă pagina principală"
+              >
+                <Image
+                  src="/Sigla-DOTTO-TV---alb.png"
+                  alt="DottoTV"
+                  height={120}
+                  width={480}
+                  className="h-24 md:h-[120px]"
+                  style={{ width: "auto" }}
+                  priority
+                />
+              </button>
+            ) : (
+              <Link href="/" className="flex-shrink-0" aria-label="Acasă">
+                <Image
+                  src="/Sigla-DOTTO-TV---alb.png"
+                  alt="DottoTV"
+                  height={120}
+                  width={480}
+                  className="h-24 md:h-[120px]"
+                  style={{ width: "auto" }}
+                  priority
+                />
+              </Link>
+            )}
 
             {/* Desktop nav */}
             <nav className="hidden md:flex items-center gap-1 overflow-x-auto scrollbar-none">

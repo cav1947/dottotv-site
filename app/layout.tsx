@@ -117,6 +117,19 @@ export default async function RootLayout({
         />
       </head>
       <body>
+        <Script
+          src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js"
+          strategy="afterInteractive"
+          defer
+        />
+        <Script id="onesignal-init" strategy="afterInteractive">
+          {`
+            window.OneSignalDeferred = window.OneSignalDeferred || [];
+            window.OneSignalDeferred.push(function(OneSignal) {
+              OneSignal.init({ appId: "291514f1-1094-448d-b1ef-96331a4fd342" });
+            });
+          `}
+        </Script>
         {GA_ID && (
           <>
             <Script
