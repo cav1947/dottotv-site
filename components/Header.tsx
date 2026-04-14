@@ -6,12 +6,14 @@ import { useState, useEffect, useRef } from "react";
 import ThemeToggle from "./ThemeToggle";
 import SearchOverlay from "./SearchOverlay";
 import type { Category } from "@/lib/wordpress";
+import type { ExchangeRates } from "@/lib/bnr";
 
 interface Props {
   categories: Category[];
+  rates?: ExchangeRates;
 }
 
-export default function Header({ categories }: Props) {
+export default function Header({ categories, rates }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -81,6 +83,49 @@ export default function Header({ categories }: Props) {
               </Link>
             </nav>
 
+            {/* Exchange rates — desktop only */}
+            {rates && (rates.EUR !== null || rates.USD !== null) && (
+              <div className="hidden md:flex items-center gap-3 text-xs text-white/75 border-l border-white/20 pl-3 ml-1">
+                {rates.EUR !== null && (
+                  <span className="flex items-center gap-1.5 whitespace-nowrap">
+                    {/* EU flag clipped to circle via CSS */}
+                    <span className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/20" aria-label="Euro">
+                      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="20" height="20" fill="#003399"/>
+                        <g transform="translate(10,10)">
+                          {Array.from({ length: 12 }, (_, i) => {
+                            const a = (i * 30 - 90) * (Math.PI / 180);
+                            return <circle key={i} cx={+(Math.cos(a) * 6.2).toFixed(3)} cy={+(Math.sin(a) * 6.2).toFixed(3)} r="1.15" fill="#FFCC00"/>;
+                          })}
+                        </g>
+                      </svg>
+                    </span>
+                    <b className="font-semibold text-white/90">{rates.EUR.toFixed(4)}</b>
+                  </span>
+                )}
+                {rates.USD !== null && (
+                  <span className="flex items-center gap-1.5 whitespace-nowrap">
+                    {/* US flag clipped to circle via CSS */}
+                    <span className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/20" aria-label="Dolar SUA">
+                      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        {/* 13 stripes: red base + 6 white stripes */}
+                        <rect width="20" height="20" fill="#B22234"/>
+                        <rect y="1.54" width="20" height="1.54" fill="white"/>
+                        <rect y="4.61" width="20" height="1.54" fill="white"/>
+                        <rect y="7.69" width="20" height="1.54" fill="white"/>
+                        <rect y="10.77" width="20" height="1.54" fill="white"/>
+                        <rect y="13.85" width="20" height="1.54" fill="white"/>
+                        <rect y="16.92" width="20" height="1.54" fill="white"/>
+                        {/* Blue canton */}
+                        <rect width="9" height="7.69" fill="#3C3B6E"/>
+                      </svg>
+                    </span>
+                    <b className="font-semibold text-white/90">{rates.USD.toFixed(4)}</b>
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Actions */}
             <div className="flex items-center gap-2">
               {/* Search */}
@@ -148,6 +193,44 @@ export default function Header({ categories }: Props) {
               <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
               LIVE TV
             </Link>
+            {/* Exchange rates in mobile menu */}
+            {rates && (rates.EUR !== null || rates.USD !== null) && (
+              <div className="flex items-center gap-4 pt-3 mt-1 border-t border-white/10">
+                {rates.EUR !== null && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/20" aria-label="Euro">
+                      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="20" height="20" fill="#003399"/>
+                        <g transform="translate(10,10)">
+                          {Array.from({ length: 12 }, (_, i) => {
+                            const a = (i * 30 - 90) * (Math.PI / 180);
+                            return <circle key={i} cx={+(Math.cos(a) * 6.2).toFixed(3)} cy={+(Math.sin(a) * 6.2).toFixed(3)} r="1.15" fill="#FFCC00"/>;
+                          })}
+                        </g>
+                      </svg>
+                    </span>
+                    <b className="text-xs font-semibold text-white/90">{rates.EUR.toFixed(4)}</b>
+                  </span>
+                )}
+                {rates.USD !== null && (
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/20" aria-label="Dolar SUA">
+                      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="20" height="20" fill="#B22234"/>
+                        <rect y="1.54" width="20" height="1.54" fill="white"/>
+                        <rect y="4.61" width="20" height="1.54" fill="white"/>
+                        <rect y="7.69" width="20" height="1.54" fill="white"/>
+                        <rect y="10.77" width="20" height="1.54" fill="white"/>
+                        <rect y="13.85" width="20" height="1.54" fill="white"/>
+                        <rect y="16.92" width="20" height="1.54" fill="white"/>
+                        <rect width="9" height="7.69" fill="#3C3B6E"/>
+                      </svg>
+                    </span>
+                    <b className="text-xs font-semibold text-white/90">{rates.USD.toFixed(4)}</b>
+                  </span>
+                )}
+              </div>
+            )}
           </nav>
         </div>
       )}

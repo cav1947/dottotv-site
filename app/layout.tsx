@@ -9,6 +9,7 @@ import CookieBanner from "@/components/CookieBanner";
 import BackToTop from "@/components/BackToTop";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { getCategories, getBreakingNews } from "@/lib/wordpress";
+import { getExchangeRates } from "@/lib/bnr";
 import { organizationSchema, SITE_URL } from "@/lib/seo";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? "";
@@ -90,9 +91,10 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [categories, breakingNews] = await Promise.all([
+  const [categories, breakingNews, rates] = await Promise.all([
     getCategories().catch(() => []),
     getBreakingNews().catch(() => []),
+    getExchangeRates().catch(() => ({ EUR: null, USD: null })),
   ]);
 
   return (
@@ -131,7 +133,7 @@ export default async function RootLayout({
           </>
         )}
         <Providers>
-          <Header categories={categories} />
+          <Header categories={categories} rates={rates} />
           <div className="h-16" aria-hidden="true" />
           {breakingNews.length > 0 && <BreakingNewsTicker posts={breakingNews} />}
           <main className="min-h-screen">
