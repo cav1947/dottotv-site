@@ -21,11 +21,13 @@ export default function SearchOverlay({ onClose }: Props) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [error, setError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Focus input la deschidere
+  // Focus fallback pentru browsere care ignoră autoFocus
   useEffect(() => {
-    inputRef.current?.focus();
+    const t = setTimeout(() => inputRef.current?.focus(), 50);
+    return () => clearTimeout(t);
   }, []);
 
   // Escape închide
@@ -48,18 +50,23 @@ export default function SearchOverlay({ onClose }: Props) {
     if (query.length < 3) {
       setResults([]);
       setSearched(false);
+      setError(false);
       return;
     }
 
     const timer = setTimeout(async () => {
       setLoading(true);
+      setError(false);
       try {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        if (!res.ok) throw new Error("search failed");
         const data: SearchResult[] = await res.json();
         setResults(data);
         setSearched(true);
       } catch {
         setResults([]);
+        setSearched(true);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -99,11 +106,18 @@ export default function SearchOverlay({ onClose }: Props) {
 
           <input
             ref={inputRef}
-            type="text"
+            type="search"
+            autoFocus
+            inputMode="search"
+            enterKeyHint="search"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Caută știri, subiecte, persoane..."
-            className="flex-1 text-[17px] text-gray-900 dark:text-white bg-transparent outline-none placeholder-gray-400"
+            placeholder="Caută articole..."
+            className="flex-1 text-[17px] text-gray-900 dark:text-white bg-transparent outline-none placeholder-gray-400 [&::-webkit-search-cancel-button]:hidden"
           />
 
           <button
@@ -132,8 +146,19 @@ export default function SearchOverlay({ onClose }: Props) {
             </div>
           )}
 
+          {/* Eroare de rețea */}
+          {searched && error && !loading && (
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+              <svg className="w-14 h-14 mb-4 text-gray-200 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              </svg>
+              <p className="text-gray-700 dark:text-gray-300 font-semibold">Eroare la căutare</p>
+              <p className="text-gray-400 text-sm mt-1">Verifică conexiunea și încearcă din nou</p>
+            </div>
+          )}
+
           {/* Niciun rezultat */}
-          {searched && results.length === 0 && !loading && (
+          {searched && !error && results.length === 0 && !loading && (
             <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
               <svg className="w-14 h-14 mb-4 text-gray-200 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import ThemeToggle from "./ThemeToggle";
 import SearchOverlay from "./SearchOverlay";
 import type { Category } from "@/lib/wordpress";
@@ -161,8 +162,11 @@ export default function Header({ categories, rates }: Props) {
         </div>
       </div>
 
-      {/* Search overlay */}
-      {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
+      {/* Search overlay — portal la body ca să scape din transform-ul header-ului */}
+      {searchOpen && createPortal(
+        <SearchOverlay onClose={() => setSearchOpen(false)} />,
+        document.body
+      )}
 
       {/* Mobile menu */}
       {menuOpen && (

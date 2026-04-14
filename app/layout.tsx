@@ -8,6 +8,7 @@ import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import CookieBanner from "@/components/CookieBanner";
 import BackToTop from "@/components/BackToTop";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { Analytics } from "@vercel/analytics/react";
 import { getCategories, getBreakingNews } from "@/lib/wordpress";
 import { getExchangeRates } from "@/lib/bnr";
 import { organizationSchema, SITE_URL } from "@/lib/seo";
@@ -143,6 +144,7 @@ export default async function RootLayout({
           <CookieBanner />
           <BackToTop />
           {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
+          <Analytics />
         </Providers>
       </body>
     </html>

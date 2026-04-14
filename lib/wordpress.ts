@@ -39,13 +39,15 @@ const API_URL =
 
 async function gql<T = unknown>(
   query: string,
-  variables?: Record<string, unknown>
+  variables?: Record<string, unknown>,
+  fetchInit?: RequestInit
 ): Promise<T> {
   const res = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query, variables: variables ?? {} }),
     next: { revalidate: 60 },
+    ...fetchInit,
   });
 
   if (!res.ok) throw new Error(`GraphQL HTTP error ${res.status}`);
@@ -382,7 +384,8 @@ export async function searchPosts(query: string, first = 10): Promise<Post[]> {
         }
       }
     `,
-    { search: query, first }
+    { search: query, first },
+    { cache: "no-store" }
   );
   return (data.posts?.nodes ?? []).map(normalizePost);
 }

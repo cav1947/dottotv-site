@@ -29,7 +29,8 @@
       "Bash(find:*)",
       "Bash(printf %s\\\\n:*)",
       "Bash(node -e \"const XLSX = require\\('xlsx'\\); console.log\\('xlsx ok, version:', XLSX.version\\);\")",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm i:*)"
     ]
   }
 }
