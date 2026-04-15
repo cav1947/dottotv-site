@@ -19,10 +19,13 @@ export default function Header({ categories, rates }: Props) {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
+  const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const lastScrollY = useRef(0);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -185,7 +188,7 @@ export default function Header({ categories, rates }: Props) {
       </div>
 
       {/* Search overlay — portal la body ca să scape din transform-ul header-ului */}
-      {searchOpen && createPortal(
+      {mounted && searchOpen && createPortal(
         <SearchOverlay onClose={() => setSearchOpen(false)} />,
         document.body
       )}

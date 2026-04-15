@@ -163,6 +163,40 @@
   border: none;
 }
 
+/* ── Embed-uri verticale 9:16 — Facebook Reels, TikTok, Instagram Reels ──── */
+/* Pe desktop: limitat la 400px, centrat, aspect ratio 9:16.                   */
+/* Pe mobil: neschimbat — comportamentul implicit funcționează corect.          */
+@media (min-width: 768px) {
+  /* Centrat + lățime maximă pentru blocul embed */
+  .article-content .wp-embed-aspect-9-16,
+  .article-content .wp-block-embed-tiktok,
+  .article-content .wp-block-embed-instagram {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Wrapper-ul: înlocuiește trucul padding-bottom 16:9 cu aspect-ratio 9:16.
+     !important suprascrie inline style="padding-bottom:56.25%" injectat de WordPress. */
+  .article-content .wp-embed-aspect-9-16 .wp-block-embed__wrapper,
+  .article-content .wp-block-embed-tiktok .wp-block-embed__wrapper,
+  .article-content .wp-block-embed-instagram .wp-block-embed__wrapper {
+    padding-bottom: 0 !important;
+    height: auto !important;
+    aspect-ratio: 9 / 16;
+  }
+
+  /* Iframe-ul: resetat din position:absolute (moștenit) și aspect-ratio:16/9 (generic) */
+  .article-content .wp-embed-aspect-9-16 .wp-block-embed__wrapper iframe,
+  .article-content .wp-block-embed-tiktok .wp-block-embed__wrapper iframe,
+  .article-content .wp-block-embed-instagram .wp-block-embed__wrapper iframe {
+    position: static;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: unset;
+  }
+}
+
 /* Dark mode adjustments */
 .dark .bg-brand-blue {
   background-color: var(--brand-blue);

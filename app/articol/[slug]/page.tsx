@@ -64,6 +64,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
+  // og:title — titlu complet fără sufix, max 100 caractere (limita Facebook)
+  const ogTitle = cleanTitle.length > 100
+    ? cleanTitle.slice(0, 97) + "..."
+    : cleanTitle;
+
   const keywords = [
     ...(focusKw ? [focusKw] : []),
     "știri",
@@ -83,7 +88,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     openGraph: {
       siteName: "DOTTO TV",
-      title: seoTitle,
+      title: ogTitle,
       description: seoDesc,
       url: articleUrl,
       type: "article",
@@ -98,7 +103,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       site: "@dottotv",
-      title: seoTitle,
+      title: ogTitle,
       description: seoDesc,
       images: imageUrl ? [imageUrl] : undefined,
     },

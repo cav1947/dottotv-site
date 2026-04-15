@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -27,26 +27,83 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const touchStartY = useRef<number | null>(null);
+  // Ref pentru activeIndex — evită closure-uri stale în handlere native
+  const activeIndexRef = useRef(0);
   const router = useRouter();
 
+  useEffect(() => {
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
+
+  const scrollToSlide = useCallback((index: number) => {
+    const container = containerRef.current;
+    if (!container) return;
+    container.scrollTo({ top: index * container.clientHeight, behavior: "smooth" });
+    setActiveIndex(index);
+  }, []);
+
+  // touchmove non-pasiv: preventDefault blochează scroll-ul paginii în timpul
+  // navigării între slide-uri. Pe ultimul slide + swipe-up NU apelăm preventDefault
+  // → gestul trece instant la scroll-ul normal al paginii fără nicio pauză.
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const handleScroll = () => {
-      const index = Math.round(container.scrollTop / container.clientHeight);
-      setActiveIndex(index);
+    const handleTouchMove = (e: TouchEvent) => {
+      if (touchStartY.current === null) return;
+      const deltaY = touchStartY.current - e.touches[0].clientY;
+      const isSwipeUp = deltaY > 0;
+      const isLast = activeIndexRef.current === posts.length - 1;
+
+      // Ultimul slide + swipe sus → lasă pagina să scrolleze
+      if (isLast && isSwipeUp) return;
+
+      // Toate celelalte cazuri → blochează scroll-ul paginii
+      e.preventDefault();
     };
 
-    container.addEventListener("scroll", handleScroll, { passive: true });
-    return () => container.removeEventListener("scroll", handleScroll);
+    container.addEventListener("touchmove", handleTouchMove, { passive: false });
+    return () => container.removeEventListener("touchmove", handleTouchMove);
+  }, [posts.length]);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    touchStartY.current = e.touches[0].clientY;
   }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      if (touchStartY.current === null) return;
+      const deltaY = touchStartY.current - e.changedTouches[0].clientY;
+      const absY = Math.abs(deltaY);
+      touchStartY.current = null;
+
+      const idx = activeIndexRef.current;
+
+      // Tap (mișcare < 10px) → navighează la articol
+      if (absY < 10) {
+        router.push(`/articol/${posts[idx].slug}`);
+        return;
+      }
+
+      const isSwipeUp = deltaY > 0;
+
+      if (isSwipeUp && idx < posts.length - 1) {
+        scrollToSlide(idx + 1);
+      } else if (!isSwipeUp && idx > 0) {
+        scrollToSlide(idx - 1);
+      }
+      // Ultimul slide + swipe sus: pagina deja scrollează natural, nimic de făcut
+    },
+    [posts, router, scrollToSlide]
+  );
 
   return (
     <div
       ref={containerRef}
-      className="h-[calc(100dvh-64px)] overflow-y-scroll snap-y snap-mandatory scrollbar-none lg:hidden"
+      className="h-[calc(100dvh-64px)] overflow-y-hidden scrollbar-none lg:hidden"
       style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {posts.map((post, i) => {
         const category = post.categories?.nodes?.find((c) => !HIDDEN_SLUGS.includes(c.slug));
@@ -56,19 +113,10 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
         return (
           <div
             key={post.id}
-            className="h-[calc(100dvh-64px)] snap-start relative overflow-hidden bg-gray-900"
+            className="h-[calc(100dvh-64px)] relative overflow-hidden bg-gray-900"
           >
-            {/* Imagine full screen — tap navighează, swipe derulează */}
-            <div
-              className="absolute inset-0"
-              onTouchStart={(e) => { touchStartY.current = e.touches[0].clientY; }}
-              onTouchEnd={(e) => {
-                if (touchStartY.current === null) return;
-                const delta = Math.abs(e.changedTouches[0].clientY - touchStartY.current);
-                touchStartY.current = null;
-                if (delta < 10) router.push(`/articol/${post.slug}`);
-              }}
-            >
+            {/* Imagine full screen */}
+            <div className="absolute inset-0">
               {imageUrl && (
                 <Image
                   src={imageUrl}
