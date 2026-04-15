@@ -103,11 +103,6 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="preload"
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&display=swap"
-          as="style"
-        />
         <meta name="theme-color" content="#3c68b2" />
         <meta name="format-detection" content="telephone=no" />
         <link rel="dns-prefetch" href="//dottotv.ro" />
