@@ -8,13 +8,17 @@ import {
   getCategories,
   getPostsByCategory,
   getLatestPosts,
+  getPostCardBySlug,
+  type PostCard,
 } from "@/lib/wordpress";
+import { extractRelatedSlugs, parseContentSegments } from "@/lib/parseContent";
 import { getWeatherConstanta } from "@/lib/weather";
 import Sidebar from "@/components/Sidebar";
 import AdBanner from "@/components/AdBanner";
 import ArticleCard from "@/components/ArticleCard";
 import ReadingProgress from "@/components/ReadingProgress";
 import ShareButtons from "@/components/ShareButtons";
+import RelatedArticleCard from "@/components/RelatedArticleCard";
 import { generateSEOForArticle } from "@/lib/claude";
 import {
   SITE_URL,
@@ -127,6 +131,12 @@ function formatDate(dateString: string): string {
   });
 }
 
+function splitAfterFirstParagraph(html: string): [string, string] {
+  const idx = html.indexOf("</p>");
+  if (idx === -1) return [html, ""];
+  return [html.slice(0, idx + 4), html.slice(idx + 4)];
+}
+
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
@@ -143,21 +153,30 @@ export default async function ArticlePage({ params }: Props) {
   // Ultimele 4 articole, excluzând articolul curent
   const ultimaOra = latestPosts.filter((p) => p.slug !== slug).slice(0, 4);
 
-  // Sparge HTML-ul după primul </p> pentru a insera "Ultima oră"
-  function splitAfterFirstParagraph(html: string): [string, string] {
-    const idx = html.indexOf("</p>");
-    if (idx === -1) return [html, ""];
-    return [html.slice(0, idx + 4), html.slice(idx + 4)];
-  }
   const [firstPara, restContent] = splitAfterFirstParagraph(post.content);
 
   const category = post.categories?.nodes?.[0];
   const articleUrl = `${SITE_URL}/articol/${slug}`;
-  const relatedPosts = category
-    ? await getPostsByCategory(category.slug, 10)
-        .then(({ posts }) => posts.filter((p) => p.slug !== slug).slice(0, 6))
-        .catch(() => [])
-    : [];
+
+  // Collect slugs from <!-- related:ID:SLUG --> comments in restContent
+  const inlineSlugs = extractRelatedSlugs(restContent);
+
+  const [relatedPosts, inlineCards] = await Promise.all([
+    category
+      ? getPostsByCategory(category.slug, 10)
+          .then(({ posts }) => posts.filter((p) => p.slug !== slug).slice(0, 6))
+          .catch(() => [] as typeof latestPosts)
+      : Promise.resolve([] as typeof latestPosts),
+    Promise.all(inlineSlugs.map((s) => getPostCardBySlug(s).catch(() => null))),
+  ]);
+
+  const inlineCardMap = new Map<string, PostCard>();
+  inlineSlugs.forEach((s, i) => {
+    const card = inlineCards[i];
+    if (card) inlineCardMap.set(s, card);
+  });
+
+  const restSegments = parseContentSegments(restContent);
 
   const cleanTitle = post.title.replace(/<[^>]*>/g, "");
   const authorName = post.author?.node?.name || "DottoTV";
@@ -368,8 +387,14 @@ export default async function ArticlePage({ params }: Props) {
                   </a>
                 </div>
 
-                {/* Restul articolului */}
-                <div dangerouslySetInnerHTML={{ __html: restContent }} />
+                {/* Restul articolului — cu carduri related inline */}
+                {restSegments.map((seg, i) =>
+                  seg.type === "html" ? (
+                    <div key={i} dangerouslySetInnerHTML={{ __html: seg.content }} />
+                  ) : inlineCardMap.has(seg.slug) ? (
+                    <RelatedArticleCard key={i} post={inlineCardMap.get(seg.slug)!} />
+                  ) : null
+                )}
               </div>
 
               {/* Ad after content */}

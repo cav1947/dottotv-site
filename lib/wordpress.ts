@@ -32,6 +32,13 @@ export interface Category {
   description: string;
 }
 
+export interface PostCard {
+  slug: string;
+  title: string;
+  featuredImage: { node: { sourceUrl: string; altText: string } } | null;
+  category: { name: string; slug: string } | null;
+}
+
 // ─── GraphQL client ───────────────────────────────────────────────────────────
 
 const API_URL =
@@ -366,6 +373,45 @@ export async function getPostsByTag(
   return {
     posts: (data.posts?.nodes ?? []).map(normalizePost),
     pageInfo: data.posts?.pageInfo ?? { hasNextPage: false, endCursor: "" },
+  };
+}
+
+const CARD_HIDDEN_SLUGS = ["uncategorized", "necategorizat", "dotto-news", "breaking"];
+
+export async function getPostCardBySlug(slug: string): Promise<PostCard | null> {
+  const data = await gql<{ postBy: unknown }>(
+    /* GraphQL */ `
+      query GetPostCard($slug: String!) {
+        postBy(slug: $slug) {
+          slug
+          title(format: RENDERED)
+          featuredImage {
+            node {
+              sourceUrl
+              altText
+            }
+          }
+          categories {
+            nodes {
+              name
+              slug
+            }
+          }
+        }
+      }
+    `,
+    { slug }
+  );
+  if (!data.postBy) return null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const node = data.postBy as any;
+  const cats: { name: string; slug: string }[] = node.categories?.nodes ?? [];
+  const category = cats.find((c) => !CARD_HIDDEN_SLUGS.includes(c.slug)) ?? cats[0] ?? null;
+  return {
+    slug: node.slug ?? slug,
+    title: node.title ?? "",
+    featuredImage: node.featuredImage ?? null,
+    category: category ? { name: category.name, slug: category.slug } : null,
   };
 }
 
