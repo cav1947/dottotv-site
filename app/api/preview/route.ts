@@ -15,6 +15,7 @@ export async function GET(request: Request) {
     return new Response('Slug lipsă', { status: 400 })
   }
 
-  draftMode().enable()
+  const draft = await draftMode()
+  draft.enable()
   redirect(`/articol/${slug}?preview=true&id=${id}`)
 }
