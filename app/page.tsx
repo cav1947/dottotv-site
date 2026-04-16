@@ -67,7 +67,7 @@ function SectionHeader({ title, slug, color = "bg-brand-blue" }: { title: string
 
 export default async function HomePage() {
   const [allPosts, categories, weather, sportPosts, politicaPosts, sanatateaLaZiPosts, constanta,
-    externeLatest, interneLatest, utilitareLatest, culturaLatest, evenimentePosts, breakingPosts] =
+    externeLatest, interneLatest, utilitareLatest, culturaLatest, evenimentePosts, breakingPosts, actualitateLatest] =
     await Promise.all([
       getLatestPosts(35).catch(() => []),
       getCategories().catch(() => []),
@@ -82,6 +82,7 @@ export default async function HomePage() {
       getPostsByCategory("cultura", 1).catch(() => ({ posts: [] })),
       getPostsByCategory("evenimente", 5).catch(() => ({ posts: [] })),
       getPostsByCategory("breaking", 10).catch(() => ({ posts: [] })),
+      getPostsByCategory("actualitate", 10).catch(() => ({ posts: [] })),
     ]);
 
   // Elimină duplicate după id — același articol poate fi în mai multe categorii
@@ -118,7 +119,11 @@ export default async function HomePage() {
   const hero3 = heroPosts[2];
   const hero4 = heroPosts[3];
   const hero5 = heroPosts[4];
-  const latestRow = uniquePosts.slice(5, 9);
+
+  const heroIds = new Set(heroPosts.map((p) => p.id));
+  const latestRow = dedup(actualitateLatest.posts)
+    .filter((p) => !heroIds.has(p.id))
+    .slice(0, 4);
 
   return (
     <>
