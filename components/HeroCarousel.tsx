@@ -31,15 +31,13 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
   const activeIndexRef = useRef(0);
   const router = useRouter();
 
-  useEffect(() => {
-    activeIndexRef.current = activeIndex;
-  }, [activeIndex]);
-
   const scrollToSlide = useCallback((index: number) => {
     const container = containerRef.current;
     if (!container) return;
-    container.scrollTo({ top: index * container.clientHeight, behavior: "smooth" });
+    // Actualizează ref-ul sincron — evită stale closure la tap imediat după swipe
+    activeIndexRef.current = index;
     setActiveIndex(index);
+    container.scrollTo({ top: index * container.clientHeight, behavior: "smooth" });
   }, []);
 
   // touchmove non-pasiv: preventDefault blochează scroll-ul paginii în timpul
@@ -79,8 +77,8 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
 
       const idx = activeIndexRef.current;
 
-      // Tap (mișcare < 10px) → navighează la articol
-      if (absY < 10) {
+      // Tap (mișcare < 20px) → navighează la articol
+      if (absY < 20) {
         router.push(`/articol/${posts[idx].slug}`);
         return;
       }
@@ -156,7 +154,15 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
 
             {/* Titlu — jos */}
             <div className="absolute bottom-16 left-0 right-0 px-5 pb-4 pt-20">
-              <Link href={`/articol/${post.slug}`}>
+              {/* stopPropagation previne hijack-ul de la onTouchEnd al containerului;
+                  router.push asigură navigarea chiar dacă click-ul e supresat de touchmove */}
+              <Link
+                href={`/articol/${post.slug}`}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                  router.push(`/articol/${post.slug}`);
+                }}
+              >
                 <h2
                   className="text-white font-bold text-[30px] leading-snug"
                   dangerouslySetInnerHTML={{ __html: post.title }}

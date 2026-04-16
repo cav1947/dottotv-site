@@ -159,20 +159,18 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
   /* ── FEATURED (hero overlay) ── */
   if (variant === "featured") {
     return (
-      <article className="group relative overflow-hidden rounded-xl aspect-[16/9]">
+      <Link href={`/articol/${post.slug}`} className="group relative overflow-hidden rounded-xl aspect-[16/9] block">
         {imageUrl ? (
           <Image src={imageUrl} alt={imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 66vw" priority />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-brand-blue to-brand-blue-dark" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent pointer-events-none" />
         {isVideo && <PlayIcon />}
         <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
           {category && <CategoryBadge category={category} className="inline-block text-xs px-3 py-1 tracking-wide mb-3" />}
-          <Link href={`/articol/${post.slug}`}>
-            <h2 className="font-playfair font-bold text-[22px] md:text-3xl lg:text-4xl text-white group-hover:text-blue-200 line-clamp-3 leading-tight transition-colors"
-              dangerouslySetInnerHTML={{ __html: post.title }} />
-          </Link>
+          <h2 className="font-playfair font-bold text-[22px] md:text-3xl lg:text-4xl text-white group-hover:text-blue-200 line-clamp-3 leading-tight transition-colors"
+            dangerouslySetInnerHTML={{ __html: post.title }} />
           <div className="hidden md:block text-sm text-gray-300 mt-2 line-clamp-3"
             dangerouslySetInnerHTML={{ __html: post.excerpt }} />
           {post.author && (
@@ -181,7 +179,7 @@ export default function ArticleCard({ post, variant = "medium" }: Props) {
             </div>
           )}
         </div>
-      </article>
+      </Link>
     );
   }
 
