@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { draftMode } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -30,12 +29,10 @@ import {
 
 interface Props {
   params: Promise<{ slug: string }>;
-  searchParams?: Promise<{ preview?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const { isEnabled: isPreview } = await draftMode();
   const post = await getPostBySlug(slug).catch(() => null);
   if (!post) return { title: "Articol negăsit" };
 
@@ -145,7 +142,7 @@ export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
 
   const [post, categories, weather, latestPosts] = await Promise.all([
-    getPostBySlug(slug, isPreview).catch(() => null),
+    getPostBySlug(slug).catch(() => null),
     getCategories().catch(() => []),
     getWeatherConstanta().catch(() => null),
     getLatestPosts(5).catch(() => []),
@@ -203,14 +200,6 @@ export default async function ArticlePage({ params }: Props) {
 
   return (
     <>
-         {isPreview && (
-        <div className="fixed top-0 left-0 right-0 z-[9999] bg-yellow-400 text-black text-center py-2 text-sm font-bold shadow-lg">
-          ⚠️ MOD PREVIEW — Articol nepublicat &nbsp;|&nbsp;
-          <a href="/api/disable-preview" className="underline hover:text-gray-800">
-            Ieși din preview
-          </a>
-        </div>
-      )}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
 

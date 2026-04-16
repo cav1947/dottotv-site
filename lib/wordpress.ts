@@ -180,14 +180,7 @@ export async function getLatestPosts(first = 12): Promise<Post[]> {
   return (data.posts?.nodes ?? []).map(normalizePost);
 }
 
-export async function getPostBySlug(slug: string, isPreview = false): Promise<Post | null> {
-  const authHeader = isPreview
-    ? "Basic " +
-      Buffer.from(
-        `${process.env.WORDPRESS_USERNAME}:${process.env.WORDPRESS_APP_PASSWORD}`
-      ).toString("base64")
-    : null;
-
+export async function getPostBySlug(slug: string): Promise<Post | null> {
   const data = await gql<{ postBy: unknown }>(
     /* GraphQL */ `
       ${POST_FIELDS}
@@ -197,14 +190,7 @@ export async function getPostBySlug(slug: string, isPreview = false): Promise<Po
         }
       }
     `,
-    { slug },
-    {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-        ...(authHeader ? { Authorization: authHeader } : {}),
-      },
-    }
+    { slug }
   );
   if (!data.postBy) return null;
   return normalizePost(data.postBy);
