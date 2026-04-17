@@ -26,6 +26,7 @@ function getCategoryColor(slug: string) {
 export default function HeroCarousel({ posts }: { posts: Post[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
   // Ref pentru activeIndex — evită closure-uri stale în handlere native
   const activeIndexRef = useRef(0);
@@ -65,20 +66,23 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
   }, [posts.length]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
   }, []);
 
   const handleTouchEnd = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
-      if (touchStartY.current === null) return;
+      if (touchStartY.current === null || touchStartX.current === null) return;
       const deltaY = touchStartY.current - e.changedTouches[0].clientY;
-      const absY = Math.abs(deltaY);
+      const deltaX = touchStartX.current - e.changedTouches[0].clientX;
+      const totalDistance = Math.hypot(deltaX, deltaY);
       touchStartY.current = null;
+      touchStartX.current = null;
 
       const idx = activeIndexRef.current;
 
-      // Tap (mișcare < 20px) → navighează la articol
-      if (absY < 20) {
+      // Tap (distanță totală < 10px) → navighează la articol
+      if (totalDistance < 10) {
         router.push(`/articol/${posts[idx].slug}`);
         return;
       }
@@ -154,13 +158,18 @@ export default function HeroCarousel({ posts }: { posts: Post[] }) {
 
             {/* Titlu — jos */}
             <div className="absolute bottom-16 left-0 right-0 px-5 pb-4 pt-20">
-              {/* stopPropagation previne hijack-ul de la onTouchEnd al containerului;
-                  router.push asigură navigarea chiar dacă click-ul e supresat de touchmove */}
               <Link
                 href={`/articol/${post.slug}`}
                 onTouchEnd={(e) => {
-                  e.stopPropagation();
-                  router.push(`/articol/${post.slug}`);
+                  if (touchStartX.current === null || touchStartY.current === null) return;
+                  const deltaX = touchStartX.current - e.changedTouches[0].clientX;
+                  const deltaY = touchStartY.current - e.changedTouches[0].clientY;
+                  const totalDistance = Math.hypot(deltaX, deltaY);
+                  if (totalDistance < 10) {
+                    e.stopPropagation();
+                    router.push(`/articol/${post.slug}`);
+                  }
+                  // Swipe → nu oprim propagarea, containerul gestionează navigarea între slide-uri
                 }}
               >
                 <h2
