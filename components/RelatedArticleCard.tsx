@@ -36,19 +36,18 @@ export default function RelatedArticleCard({ post }: { post: PostCard }) {
         {imageUrl && (
           <div
             style={{
-              width: 96,
-              height: 68,
               flexShrink: 0,
               borderRadius: 6,
               overflow: "hidden",
               background: "#DBEAFE",
             }}
+            className="w-[100px] h-[70px] md:w-[120px] md:h-[85px]"
           >
             <Image
               src={imageUrl}
               alt={imageAlt}
-              width={96}
-              height={68}
+              width={120}
+              height={85}
               className="w-full h-full object-cover"
             />
           </div>
@@ -74,17 +73,8 @@ export default function RelatedArticleCard({ post }: { post: PostCard }) {
             </span>
           )}
           <p
-            style={{
-              fontSize: 14,
-              fontWeight: 600,
-              lineHeight: 1.4,
-              color: "#1a2033",
-              margin: 0,
-              display: "-webkit-box",
-              WebkitBoxOrient: "vertical",
-              WebkitLineClamp: 2,
-              overflow: "hidden",
-            }}
+            style={{ fontWeight: 600, lineHeight: 1.4, color: "#1a2033", margin: 0 }}
+            className="text-[14px] md:text-[15px] line-clamp-4 md:line-clamp-3"
             dangerouslySetInnerHTML={{ __html: post.title }}
           />
         </div>
