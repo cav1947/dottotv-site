@@ -136,10 +136,10 @@ export default async function HomePage() {
           className="mb-4 flex justify-center items-center py-2 rounded-xl"
           style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f7ff 100%)" }}
         >
-          <a href="https://vivo-shopping.com/ro/constanta" target="_blank" rel="noopener noreferrer sponsored" aria-label="Publicitate VIVO CT" className="block w-full md:w-auto md:flex-shrink-0">
+          <a href="https://vivo-shopping.com/ro/constanta" target="_blank" rel="noopener noreferrer sponsored" aria-label="Publicitate VIVO CJ" className="block w-full md:w-auto md:flex-shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/ads/VIVO_CT_LOCAL-DISPLAY_728x90px.gif"
+              src="/ads/VIVO!_CJ_LOCAL-DISPLAY_728x90px.gif"
               alt="Publicitate"
               width={728}
               height={90}

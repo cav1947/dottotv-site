@@ -311,8 +311,24 @@ export default async function ArticlePage({ params }: Props) {
                 </figure>
               )}
 
-              {/* Ad before content */}
-              <AdBanner slot="article-pre-content" width={728} height={90} className="mb-8" />
+              {/* Banner susținere DOTTO TV */}
+              <a
+                href="/redirectionare-impozit"
+                className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-5 px-7 py-6 rounded-2xl no-underline hover:opacity-95 transition-opacity"
+                style={{ background: "linear-gradient(135deg, #1565C0 0%, #0d47a1 100%)" }}
+              >
+                <div className="text-center sm:text-left">
+                  <p className="font-playfair font-bold text-white text-lg md:text-xl leading-snug mb-1">
+                    Susții jurnalismul independent din Constanța
+                  </p>
+                  <p className="text-blue-200 text-sm">
+                    Redirecționează 3,5% din impozitul pe venit.
+                  </p>
+                </div>
+                <span className="flex-shrink-0 bg-white font-bold text-sm px-5 py-2.5 rounded-xl whitespace-nowrap" style={{ color: "#1565C0" }}>
+                  Descoperă cum →
+                </span>
+              </a>
 
               {/* Article body */}
               <div id="article-body" className="article-content">

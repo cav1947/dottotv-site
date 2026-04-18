@@ -76,6 +76,7 @@ const pages = [
   { label: "Contact", href: "/contact" },
   { label: "Publicitate", href: "/publicitate" },
   { label: "Cariere", href: "/cariere" },
+  { label: "Susține", href: "/redirectionare-impozit" },
   { label: "Termeni și Condiții", href: "/termeni-si-conditii" },
   { label: "Politică de Confidențialitate", href: "/politica-de-confidentialitate" },
   { label: "Politică Cookies", href: "/politica-de-cookies" },
