@@ -82,8 +82,8 @@ export default function RedirectionareImpozitPage() {
           }}
         />
         <div className="relative container mx-auto px-4 py-16 text-center max-w-3xl">
-          <div className="inline-flex items-center gap-2 bg-white/15 text-blue-100 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5">
-            <span className="w-1.5 h-1.5 bg-blue-200 rounded-full animate-pulse" />
+          <div className="inline-flex flex-wrap justify-center items-center gap-2 bg-white/15 text-blue-100 text-xs font-semibold uppercase tracking-widest px-4 py-1.5 rounded-full mb-5">
+            <span className="w-1.5 h-1.5 bg-blue-200 rounded-full animate-pulse flex-shrink-0" />
             Asociația Centrul pentru Jurnalism Constanța
           </div>
           <h1 className="font-playfair text-3xl md:text-5xl font-bold text-white mb-5 leading-tight">
@@ -101,7 +101,7 @@ export default function RedirectionareImpozitPage() {
 
         {/* ── SECȚIUNEA PF — CUM FUNCȚIONEAZĂ ── */}
         <section className="mb-12">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-800">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
             <div className="flex items-start gap-4 mb-6">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: ACCENT }}>
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -109,7 +109,7 @@ export default function RedirectionareImpozitPage() {
                 </svg>
               </div>
               <div>
-                <h2 className="font-playfair text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                <h2 className="font-playfair text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1">
                   Persoane fizice — 3,5% din impozitul pe venit
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -165,21 +165,21 @@ export default function RedirectionareImpozitPage() {
         {/* ── IFRAME FORMULAR ── */}
         <section className="mb-12">
           <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
-            <div className="px-8 py-6 border-b border-gray-100 dark:border-gray-800">
-              <h2 className="font-playfair text-2xl font-bold text-gray-900 dark:text-white mb-1">
+            <div className="px-5 py-5 md:px-8 md:py-6 border-b border-gray-100 dark:border-gray-800">
+              <h2 className="font-playfair text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1">
                 Completează formularul
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Completează direct mai jos — formularul oficial de redirecționare pentru Asociația Centrul pentru Jurnalism Constanța.
               </p>
             </div>
-            <div className="p-4 md:p-6">
+            <div className="p-3 md:p-6 overflow-x-hidden">
               <iframe
                 title="Formular redirecționare impozit — Asociația Centrul pentru Jurnalism Constanța"
                 src="https://redirectioneazaimpozit.ro/asociatia-centrul-pentru-jurnalism-constanta"
                 width="100%"
-                height="700"
-                style={{ border: 0, display: "block", borderRadius: "12px" }}
+                height="750"
+                style={{ border: 0, display: "block", borderRadius: "12px", maxWidth: "100%" }}
                 loading="lazy"
               />
             </div>
@@ -188,7 +188,7 @@ export default function RedirectionareImpozitPage() {
 
         {/* ── SECȚIUNEA FIRME ── */}
         <section className="mb-12">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-800">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 md:p-8 shadow-sm border border-gray-100 dark:border-gray-800">
             <div className="flex items-start gap-4 mb-6">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: "#0d7e3e" }}>
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,7 +196,7 @@ export default function RedirectionareImpozitPage() {
                 </svg>
               </div>
               <div>
-                <h2 className="font-playfair text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                <h2 className="font-playfair text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1">
                   Firme — Redirecționează până la 20% din impozitul pe profit
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -298,7 +298,7 @@ export default function RedirectionareImpozitPage() {
               </p>
               <a
                 href="mailto:office@dottotv.ro?subject=Solicitare%20contract%20sponsorizare%20-%20redirecționare%20impozit%20profit"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white transition-colors"
+                className="inline-flex w-full sm:w-auto justify-center items-center gap-2 px-6 py-3 rounded-xl font-bold text-white transition-colors"
                 style={{ backgroundColor: ACCENT }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
