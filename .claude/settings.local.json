@@ -32,7 +32,8 @@
       "Bash(node:*)",
       "Bash(npm i:*)",
       "Bash(tsc --version)",
-      "Bash(D:/dottotv-site/node_modules/.bin/tsc --noEmit)"
+      "Bash(D:/dottotv-site/node_modules/.bin/tsc --noEmit)",
+      "WebFetch(domain:www.bnr.ro)"
     ]
   }
 }
