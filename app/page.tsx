@@ -67,7 +67,8 @@ function SectionHeader({ title, slug, color = "bg-brand-blue" }: { title: string
 
 export default async function HomePage() {
   const [allPosts, categories, weather, sportPosts, politicaPosts, sanatateaLaZiPosts, constanta,
-    externeLatest, interneLatest, utilitareLatest, culturaLatest, evenimentePosts, breakingPosts] =
+    externeLatest, interneLatest, utilitareLatest, culturaLatest, evenimentePosts, breakingPosts,
+    tehnologiePosts, socialPosts] =
     await Promise.all([
       getLatestPosts(35).catch(() => []),
       getCategories().catch(() => []),
@@ -82,6 +83,8 @@ export default async function HomePage() {
       getPostsByCategory("cultura", 1).catch(() => ({ posts: [] })),
       getPostsByCategory("evenimente", 5).catch(() => ({ posts: [] })),
       getPostsByCategory("breaking", 10).catch(() => ({ posts: [] })),
+      getPostsByCategory("tehnologie-media", 2).catch(() => ({ posts: [] })),
+      getPostsByCategory("social", 2).catch(() => ({ posts: [] })),
     ]);
 
   // Elimină duplicate după id — același articol poate fi în mai multe categorii
@@ -351,8 +354,20 @@ export default async function HomePage() {
               </Link>
             </ScrollReveal>
 
+            {/* ── TEHNOLOGIE & MEDIA (2) + SOCIAL (2) ── */}
+            {(tehnologiePosts.posts.length > 0 || socialPosts.posts.length > 0) && (
+              <ScrollReveal delay={200}>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    ...tehnologiePosts.posts.slice(0, 2),
+                    ...socialPosts.posts.slice(0, 2),
+                  ].map(p => <ArticleCard key={p.id} post={p} variant="medium" />)}
+                </div>
+              </ScrollReveal>
+            )}
+
             {/* ── BANNER SANSELO ── */}
-            <ScrollReveal delay={200}>
+            <ScrollReveal delay={220}>
               <a
                 href="https://www.sanselo.com"
                 target="_blank"

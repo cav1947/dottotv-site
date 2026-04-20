@@ -16,6 +16,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   sanatate: "bg-teal-600",
   constanta: "bg-cyan-600",
   interne: "bg-indigo-600",
+  "tehnologie-media": "bg-violet-600",
+  social: "bg-pink-600",
 };
 
 const HIDDEN_SLUGS = ["uncategorized", "necategorizat", "dotto-news", "breaking"];
