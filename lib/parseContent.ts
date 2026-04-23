@@ -4,10 +4,11 @@ export type ContentSegment =
 
 // Matches (in order of capture groups):
 //   1. <!-- related:ID:SLUG --> shortcode comment
-//   2. <p><a href="https://...dottotv.ro/articol/SLUG">…</a></p>  (paragraph with only a link)
-//   3. <p>https://...dottotv.ro/articol/SLUG</p>                  (paragraph with only a bare URL)
+//   2. <p …><a href="https://...dottotv.ro/articol/SLUG[/]">…</a></p>  (paragraph with only a link)
+//   3. <p …>https://...dottotv.ro/articol/SLUG[/]</p>                  (paragraph with only a bare URL)
+// Handles: optional trailing slash, <p> with attributes, single or double-quoted href, HTML in link text
 const RELATED_RE =
-  /(?:<!--\s*related:[^:]*:([a-zA-Z0-9-]+)\s*-->)|(?:<p>\s*<a[^>]*href="https?:\/\/(?:www\.)?dottotv\.ro\/articol\/([a-zA-Z0-9-]+)"[^>]*>[^<]*<\/a>\s*<\/p>)|(?:<p>\s*https?:\/\/(?:www\.)?dottotv\.ro\/articol\/([a-zA-Z0-9-]+)\s*<\/p>)/gi;
+  /(?:<!--\s*related:[^:]*:([a-zA-Z0-9-]+)\s*-->)|(?:<p[^>]*>\s*<a[^>]*href=["']https?:\/\/(?:www\.)?dottotv\.ro\/articol\/([a-zA-Z0-9-]+)\/?["'][^>]*>.*?<\/a>\s*<\/p>)|(?:<p[^>]*>\s*https?:\/\/(?:www\.)?dottotv\.ro\/articol\/([a-zA-Z0-9-]+)\/?\s*<\/p>)/gi;
 
 function slugFromMatch(match: RegExpExecArray): string {
   return match[1] || match[2] || match[3];
