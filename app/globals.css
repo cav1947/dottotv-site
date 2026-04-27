@@ -122,15 +122,33 @@
   @apply bg-gray-50 dark:bg-gray-800 font-semibold;
 }
 
-/* Video nativ WordPress (wp-block-video) */
+/* Video nativ WordPress — wp-block-video (figură Gutenberg) */
 .article-content .wp-block-video,
 .article-content figure.wp-block-video {
   @apply my-6;
 }
 
-.article-content .wp-block-video video {
-  @apply w-full rounded-lg;
+/* Toate <video> din articol — atât wrapped în wp-block-video cât și inserate
+   direct în content (paste din admin sau editor clasic). Constrânge la lățimea
+   coloanei și păstrează aspect-ratio-ul nativ al fișierului. */
+.article-content video {
+  @apply block w-full max-w-full h-auto rounded-lg my-6;
   max-height: 560px;
+}
+
+/* Fișier nativ WordPress (wp-block-file) — download PDF/document */
+.article-content .wp-block-file {
+  @apply my-6 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700
+         bg-gray-50 dark:bg-gray-800/50 flex flex-wrap items-center gap-3;
+}
+
+.article-content .wp-block-file > a:first-child {
+  @apply text-gray-900 dark:text-gray-100 font-medium no-underline flex-1 min-w-0 truncate;
+}
+
+.article-content .wp-block-file__button {
+  @apply inline-block bg-brand-blue hover:bg-brand-blue-dark text-white
+         text-sm font-semibold px-4 py-2 rounded-md no-underline transition-colors;
 }
 
 /* Embed-uri WordPress (YouTube, Facebook etc.) — wp-block-embed */
