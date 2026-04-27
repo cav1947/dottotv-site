@@ -29,6 +29,7 @@ export default function CareerForm() {
     pozitie: "",
     mesaj: "",
   });
+  const [website, setWebsite] = useState("");
   const [cvFile, setCvFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -61,6 +62,7 @@ export default function CareerForm() {
       data.append("telefon", form.telefon);
       data.append("pozitie", form.pozitie);
       data.append("mesaj", form.mesaj);
+      data.append("website", website);
       if (cvFile) data.append("cv", cvFile);
 
       const res = await fetch("/api/contact", { method: "POST", body: data });
@@ -70,6 +72,7 @@ export default function CareerForm() {
       }
       setStatus("sent");
       setForm({ nume: "", email: "", telefon: "", pozitie: "", mesaj: "" });
+      setWebsite("");
       setCvFile(null);
       if (fileRef.current) fileRef.current.value = "";
     } catch (err: unknown) {
@@ -106,6 +109,18 @@ export default function CareerForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", top: "auto", width: 1, height: 1, overflow: "hidden" }}>
+        <label htmlFor="cariere-website">Website (nu completați)</label>
+        <input
+          id="cariere-website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
           <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5 uppercase tracking-wider">

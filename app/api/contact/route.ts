@@ -89,6 +89,12 @@ export async function POST(req: NextRequest) {
       const formData = await req.formData();
       const get = (key: string) => sanitize(formData.get(key));
 
+      // Honeypot: bots completează acest câmp invizibil. Răspundem OK
+      // fără să trimitem email ca să nu afle că au fost detectați.
+      if (get("website")) {
+        return NextResponse.json({ ok: true });
+      }
+
       const data = {
         nume: get("nume"),
         email: get("email"),
@@ -127,6 +133,12 @@ export async function POST(req: NextRequest) {
     // ── Contact & Publicitate — JSON ─────────────────────────────────
     const body = await req.json();
     const type: string = body.type ?? "contact";
+
+    // Honeypot: bots completează acest câmp invizibil. Răspundem OK
+    // fără să trimitem email ca să nu afle că au fost detectați.
+    if (sanitize(body.website)) {
+      return NextResponse.json({ ok: true });
+    }
 
     if (type === "publicitate") {
       const data = {

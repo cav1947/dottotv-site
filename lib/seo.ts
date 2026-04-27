@@ -207,6 +207,58 @@ export const broadcastServiceSchema = {
   },
 };
 
+// ─── JobPosting schema (pentru pagina /cariere) ──────────────────────────────
+//
+// Joburile sunt evergreen ("deschis continuu"). datePosted = build-time;
+// validThrough = +1 an. Dacă pagina nu se mai rebuild-uiește un an, Google va
+// marca anunțul ca expirat — păstrează un revalidate periodic în page.tsx.
+
+export function buildJobPostingSchema(jobs: { title: string; description: string }[]) {
+  const now = new Date();
+  const datePosted = now.toISOString().slice(0, 10);
+  const validThrough = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+
+  const hiringOrganization = {
+    "@type": "Organization",
+    name: SITE_NAME,
+    sameAs: SITE_URL,
+    logo: `${SITE_URL}/Sigla-DOTTO-TV---alb.png`,
+  };
+
+  const jobLocation = {
+    "@type": "Place",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Bd. Aurel Vlaicu nr. 144, etaj 1",
+      addressLocality: "Constanța",
+      addressRegion: "Constanța",
+      postalCode: "900165",
+      addressCountry: "RO",
+    },
+  };
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": jobs.map((job) => ({
+      "@type": "JobPosting",
+      title: job.title,
+      description: job.description,
+      datePosted,
+      validThrough,
+      employmentType: "FULL_TIME",
+      directApply: true,
+      hiringOrganization,
+      jobLocation,
+      applicantLocationRequirements: {
+        "@type": "Country",
+        name: "Romania",
+      },
+    })),
+  };
+}
+
 // ─── WebPage schema (pentru pagini statice: termeni, politici etc.) ───────────
 
 export function buildWebPageSchema(params: {

@@ -1,9 +1,10 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import {
   getPostBySlug,
+  getPostSlugByOldSlug,
   getAllPostSlugs,
   getCategories,
   getPostsByCategory,
@@ -116,7 +117,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs().catch(() => []);
-  return slugs.slice(0, 100).map((slug) => ({ slug }));
+  return slugs.slice(0, 500).map((slug) => ({ slug }));
 }
 
 export const revalidate = 300;
@@ -148,7 +149,15 @@ export default async function ArticlePage({ params }: Props) {
     getLatestPosts(5).catch(() => []),
   ]);
 
-  if (!post) notFound();
+  if (!post) {
+    // Fallback: poate e un slug vechi care a fost schimbat în WordPress.
+    // Dacă găsim o potrivire în _wp_old_slug, redirect 308 la slug-ul curent.
+    const newSlug = await getPostSlugByOldSlug(slug).catch(() => null);
+    if (newSlug && newSlug !== slug) {
+      permanentRedirect(`/articol/${newSlug}`);
+    }
+    notFound();
+  }
 
   // Ultimele 4 articole, excluzând articolul curent
   const ultimaOra = latestPosts.filter((p) => p.slug !== slug).slice(0, 4);

@@ -196,6 +196,56 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
   return normalizePost(data.postBy);
 }
 
+// ─── Old slug → new slug lookup (pentru redirect 308) ────────────────────────
+//
+// Dependență WP: mu-plugin `dottotv-old-slug-graphql.php` care înregistrează
+// query-ul `postByOldSlug`. Fără el, query-ul aruncă GraphQL error și funcția
+// întoarce null (degradare silențioasă — articolul rămâne 404).
+//
+// Cache asimetric in-memory:
+//   - pozitiv (slug găsit) → 10 min, fiindcă redirect-urile rareori se schimbă
+//   - negativ (nu există) → 30s, ca să prindem rapid un slug nou-introdus
+//     fără să flood-uim GraphQL când boții scanează URL-uri inexistente
+const POSITIVE_TTL_MS = 10 * 60 * 1000;
+const NEGATIVE_TTL_MS = 30 * 1000;
+const MAX_CACHE_SIZE = 1000;
+
+type OldSlugCacheEntry = { value: string | null; expiresAt: number };
+const oldSlugCache = new Map<string, OldSlugCacheEntry>();
+
+export async function getPostSlugByOldSlug(oldSlug: string): Promise<string | null> {
+  const cached = oldSlugCache.get(oldSlug);
+  if (cached && cached.expiresAt > Date.now()) return cached.value;
+
+  let value: string | null = null;
+  try {
+    const data = await gql<{ postByOldSlug: { slug: string } | null }>(
+      /* GraphQL */ `
+        query GetPostByOldSlug($slug: String!) {
+          postByOldSlug(slug: $slug) {
+            slug
+          }
+        }
+      `,
+      { slug: oldSlug }
+    );
+    value = data.postByOldSlug?.slug ?? null;
+  } catch {
+    // GraphQL error (ex. mu-plugin neinstalat) → tratează ca lookup negativ.
+    value = null;
+  }
+
+  const ttl = value ? POSITIVE_TTL_MS : NEGATIVE_TTL_MS;
+  oldSlugCache.set(oldSlug, { value, expiresAt: Date.now() + ttl });
+
+  if (oldSlugCache.size > MAX_CACHE_SIZE) {
+    const oldestKey = oldSlugCache.keys().next().value;
+    if (oldestKey !== undefined) oldSlugCache.delete(oldestKey);
+  }
+
+  return value;
+}
+
 export async function getPostsByCategory(
   categorySlug: string,
   first = 12,

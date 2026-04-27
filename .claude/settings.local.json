@@ -33,7 +33,8 @@
       "Bash(npm i:*)",
       "Bash(tsc --version)",
       "Bash(D:/dottotv-site/node_modules/.bin/tsc --noEmit)",
-      "WebFetch(domain:www.bnr.ro)"
+      "WebFetch(domain:www.bnr.ro)",
+      "Bash(awk '{print $5, $9}')"
     ]
   }
 }

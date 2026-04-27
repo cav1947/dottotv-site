@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CareerForm from "@/components/CareerForm";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, buildJobPostingSchema } from "@/lib/seo";
+
+// Refresh săptămânal — datePosted/validThrough din JobPosting sunt baked la
+// build, deci fără revalidate ar deveni stale și Google ar marca anunțurile
+// drept expirate.
+export const revalidate = 604800;
 
 export const metadata: Metadata = {
   title: "Cariere — Alătură-te echipei DOTTO TV",
@@ -122,8 +127,14 @@ const BENEFITS = [
 ];
 
 export default function CarierePage() {
+  const jobPostingSchema = buildJobPostingSchema(JOBS);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingSchema) }}
+      />
 
       {/* ── HERO ── */}
       <section

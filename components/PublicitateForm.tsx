@@ -36,6 +36,7 @@ export default function PublicitateForm() {
     serviciu: "",
     mesaj: "",
   });
+  const [website, setWebsite] = useState("");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -48,10 +49,11 @@ export default function PublicitateForm() {
       await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, type: "publicitate" }),
+        body: JSON.stringify({ ...form, website, type: "publicitate" }),
       });
       setStatus("sent");
       setForm({ nume: "", companie: "", email: "", telefon: "", serviciu: "", mesaj: "" });
+      setWebsite("");
     } catch {
       setStatus("error");
     }
@@ -88,6 +90,18 @@ export default function PublicitateForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", top: "auto", width: 1, height: 1, overflow: "hidden" }}>
+        <label htmlFor="publicitate-website">Website (nu completați)</label>
+        <input
+          id="publicitate-website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5 uppercase tracking-wider">

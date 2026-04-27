@@ -1,7 +1,30 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+
+// Self-hosted prin next/font — elimină round-trip la fonts.googleapis.com
+// și @import blocking din CSS. `display: 'swap'` previne FOIT.
+//
+// Weight-urile sunt cele efectiv folosite în UI:
+//   Inter:    400 (default), 500 (font-medium), 600 (font-semibold),
+//             700 (font-bold), 900 (font-black — branding AdBanner/Ticker)
+//   Playfair: 600 (font-semibold — h3 din articole), 700 (font-bold — titluri)
+// Lipsa unui weight forțează browser-ul la faux-bold sintetic, vizibil diferit.
+const inter = Inter({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700", "900"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin", "latin-ext"],
+  weight: ["600", "700"],
+  display: "swap",
+  variable: "--font-playfair",
+});
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
@@ -99,13 +122,10 @@ export default async function RootLayout({
   ]);
 
   return (
-    <html lang="ro" suppressHydrationWarning>
+    <html lang="ro" className={`${inter.variable} ${playfair.variable}`} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="theme-color" content="#3c68b2" />
         <meta name="format-detection" content="telephone=no" />
-        <link rel="dns-prefetch" href="//dottotv.ro" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

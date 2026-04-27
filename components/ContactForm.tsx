@@ -5,6 +5,7 @@ import { useState } from "react";
 export default function ContactForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [form, setForm] = useState({ nume: "", email: "", subiect: "", mesaj: "" });
+  const [website, setWebsite] = useState("");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -17,11 +18,12 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, type: "contact" }),
+        body: JSON.stringify({ ...form, website, type: "contact" }),
       });
       if (!res.ok) throw new Error("server error");
       setStatus("sent");
       setForm({ nume: "", email: "", subiect: "", mesaj: "" });
+      setWebsite("");
     } catch {
       setStatus("error");
     }
@@ -50,6 +52,18 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", top: "auto", width: 1, height: 1, overflow: "hidden" }}>
+        <label htmlFor="website">Website (nu completați)</label>
+        <input
+          id="website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
           <label htmlFor="nume" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
