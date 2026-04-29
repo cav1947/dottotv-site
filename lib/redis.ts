@@ -1,8 +1,11 @@
 // Helpers minime peste Upstash Redis REST API.
 // Folosit atât în middleware (Edge runtime) cât și în route handlers.
+//
+// Vercel KV / integrarea Upstash provisionează variabilele cu prefix KV_*.
+// Acceptăm și UPSTASH_* ca fallback pentru setup manual / dev local.
 
-const REDIS_URL = process.env.UPSTASH_REDIS_REST_URL;
-const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const REDIS_URL = process.env.KV_REST_API_URL ?? process.env.UPSTASH_REDIS_REST_URL;
+const REDIS_TOKEN = process.env.KV_REST_API_TOKEN ?? process.env.UPSTASH_REDIS_REST_TOKEN;
 
 export const SHORT_KEY_PREFIX = "short:";
 
@@ -17,10 +20,10 @@ type RedisResponse<T> = { result?: T; error?: string };
 
 async function redisCommand<T>(args: (string | number)[]): Promise<T> {
   const missing: string[] = [];
-  if (!REDIS_URL) missing.push("UPSTASH_REDIS_REST_URL");
-  if (!REDIS_TOKEN) missing.push("UPSTASH_REDIS_REST_TOKEN");
+  if (!REDIS_URL) missing.push("KV_REST_API_URL");
+  if (!REDIS_TOKEN) missing.push("KV_REST_API_TOKEN");
   if (missing.length) {
-    throw new Error(`Variabile de mediu Upstash lipsă: ${missing.join(", ")}`);
+    throw new Error(`Variabile de mediu Upstash/KV lipsă: ${missing.join(", ")}`);
   }
 
   const command = String(args[0] ?? "");
