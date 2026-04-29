@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { headers } from "next/headers";
 import "./globals.css";
 import Providers from "./providers";
 import Header from "@/components/Header";
@@ -92,6 +93,31 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  const host = (headersList.get("host") ?? "").toLowerCase();
+  const subdomain = host.split(":")[0].split(".")[0];
+  const isStandalone = subdomain === "tools";
+
+  // ── Subdomeniul tools.dottotv.ro: pagină standalone fără chrome ─────
+  if (isStandalone) {
+    return (
+      <html lang="ro" suppressHydrationWarning>
+        <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <meta name="theme-color" content="#3c68b2" />
+          <meta name="format-detection" content="telephone=no" />
+          <meta name="robots" content="noindex, nofollow" />
+        </head>
+        <body suppressHydrationWarning>
+          <Providers>
+            <main>{children}</main>
+          </Providers>
+        </body>
+      </html>
+    );
+  }
+
   const [categories, breakingNews, rates] = await Promise.all([
     getCategories().catch(() => []),
     getBreakingNews().catch(() => []),

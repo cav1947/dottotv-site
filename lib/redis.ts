@@ -16,27 +16,72 @@ export interface ShortLinkRecord {
 type RedisResponse<T> = { result?: T; error?: string };
 
 async function redisCommand<T>(args: (string | number)[]): Promise<T> {
-  if (!REDIS_URL || !REDIS_TOKEN) {
-    throw new Error("UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN nu sunt setate.");
+  const missing: string[] = [];
+  if (!REDIS_URL) missing.push("UPSTASH_REDIS_REST_URL");
+  if (!REDIS_TOKEN) missing.push("UPSTASH_REDIS_REST_TOKEN");
+  if (missing.length) {
+    throw new Error(`Variabile de mediu Upstash lipsă: ${missing.join(", ")}`);
   }
 
-  const res = await fetch(REDIS_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${REDIS_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(args),
-    cache: "no-store",
-  });
+  const command = String(args[0] ?? "");
+  let res: Response;
+  try {
+    res = await fetch(REDIS_URL!, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${REDIS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(args),
+      cache: "no-store",
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`Upstash fetch eșuat (${command}): ${msg}`);
+  }
 
   if (!res.ok) {
-    throw new Error(`Upstash Redis: HTTP ${res.status}`);
+    let body = "";
+    try {
+      body = (await res.text()).slice(0, 500);
+    } catch {
+      body = "<corp ne-citibil>";
+    }
+    throw new Error(`Upstash HTTP ${res.status} pe ${command}: ${body}`);
   }
 
-  const data = (await res.json()) as RedisResponse<T>;
-  if (data.error) throw new Error(data.error);
+  let data: RedisResponse<T>;
+  try {
+    data = (await res.json()) as RedisResponse<T>;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    throw new Error(`Upstash răspuns ne-JSON pe ${command}: ${msg}`);
+  }
+
+  if (data.error) {
+    throw new Error(`Upstash error pe ${command}: ${data.error}`);
+  }
   return data.result as T;
+}
+
+export function getRedisEnvStatus(): { hasUrl: boolean; hasToken: boolean; urlHost: string | null } {
+  let urlHost: string | null = null;
+  if (REDIS_URL) {
+    try {
+      urlHost = new URL(REDIS_URL).host;
+    } catch {
+      urlHost = "<URL invalid>";
+    }
+  }
+  return {
+    hasUrl: Boolean(REDIS_URL),
+    hasToken: Boolean(REDIS_TOKEN),
+    urlHost,
+  };
+}
+
+export async function pingRedis(): Promise<string> {
+  return redisCommand<string>(["PING"]);
 }
 
 // Parse-uiește valoarea brută din Redis. Acceptă și formatul vechi

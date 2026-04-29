@@ -63,9 +63,10 @@ export async function POST(req: NextRequest) {
         break;
       }
     } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
       console.error("[api/shorten] Redis EXISTS error:", err);
       return NextResponse.json(
-        { error: "Eroare la accesarea bazei de date." },
+        { error: "Eroare la accesarea bazei de date.", detail },
         { status: 500 }
       );
     }
@@ -95,9 +96,10 @@ export async function POST(req: NextRequest) {
   try {
     await setShortLinkRecord(code, record);
   } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
     console.error("[api/shorten] Redis SET error:", err);
     return NextResponse.json(
-      { error: "Eroare la salvarea link-ului." },
+      { error: "Eroare la salvarea link-ului.", detail },
       { status: 500 }
     );
   }
