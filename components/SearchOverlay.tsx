@@ -10,6 +10,7 @@ interface SearchResult {
   date: string;
   image: string | null;
   category: { name: string; slug: string } | null;
+  snippet: string;
 }
 
 interface Props {
@@ -205,6 +206,12 @@ export default function SearchOverlay({ onClose }: Props) {
                         className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-brand-blue dark:group-hover:text-brand-blue line-clamp-2 leading-snug transition-colors"
                         dangerouslySetInnerHTML={{ __html: result.title }}
                       />
+                      {result.snippet && (
+                        <p
+                          className="search-snippet text-[12px] text-gray-500 dark:text-gray-400 line-clamp-2 leading-snug mt-1"
+                          dangerouslySetInnerHTML={{ __html: result.snippet }}
+                        />
+                      )}
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                         {result.category && (
                           <span className="text-[10px] font-bold text-brand-blue uppercase tracking-wide leading-none">

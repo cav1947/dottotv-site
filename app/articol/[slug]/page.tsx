@@ -1,6 +1,7 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import {
   getPostBySlug,
@@ -27,6 +28,8 @@ import {
   buildBreadcrumbSchema,
   buildAltText,
 } from "@/lib/seo";
+
+const SocialEmbeds = dynamic(() => import("@/components/SocialEmbeds"));
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -421,6 +424,8 @@ export default async function ArticlePage({ params }: Props) {
                   ) : null
                 )}
               </div>
+
+              <SocialEmbeds />
 
               {/* Ad after content */}
               <AdBanner slot="article-post-content" width={728} height={90} className="mt-8" />

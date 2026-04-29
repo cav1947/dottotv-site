@@ -232,6 +232,20 @@
   }
 }
 
+/* Search dropdown snippet — highlight match-ul din content/excerpt */
+.search-snippet mark {
+  background-color: #fef08a;
+  color: #1f2937;
+  padding: 0 2px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+
+.dark .search-snippet mark {
+  background-color: rgba(202, 138, 4, 0.35);
+  color: #fef9c3;
+}
+
 /* Dark mode adjustments */
 .dark .bg-brand-blue {
   background-color: var(--brand-blue);

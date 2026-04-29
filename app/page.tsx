@@ -207,7 +207,6 @@ export default async function HomePage() {
             {/* ── ULTIMELE ȘTIRI (câte 1 din: Externe, Interne, Utilitare, Cultură) ── */}
             <ScrollReveal>
               <div>
-                <SectionHeader title="Ultimele Știri" slug="actualitate" color="bg-brand-blue" />
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
                     { post: externeLatest.posts[0],   label: "Externe",   slug: "externe" },
