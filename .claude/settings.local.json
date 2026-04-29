@@ -35,7 +35,9 @@
       "Bash(D:/dottotv-site/node_modules/.bin/tsc --noEmit)",
       "WebFetch(domain:www.bnr.ro)",
       "Bash(awk '{print $5, $9}')",
-      "WebFetch(domain:www.dottotv.ro)"
+      "WebFetch(domain:www.dottotv.ro)",
+      "Bash(echo \"EXIT $?\")",
+      "Bash(npx eslint *)"
     ]
   }
 }
