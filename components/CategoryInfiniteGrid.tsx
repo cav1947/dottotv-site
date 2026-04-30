@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Post } from "@/lib/wordpress";
+import { hasVideo } from "@/lib/hasVideo";
 
 interface PageInfo {
   hasNextPage: boolean;
@@ -29,18 +30,6 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 function getCatColor(slug: string) {
   return CATEGORY_COLORS[slug] ?? "bg-brand-blue";
-}
-
-function hasVideo(content: string): boolean {
-  if (!content) return false;
-  return (
-    content.includes("<iframe") ||
-    content.includes("youtube") ||
-    content.includes("vimeo") ||
-    content.includes("<video") ||
-    content.includes("wp-block-video") ||
-    content.includes("wp-block-embed")
-  );
 }
 
 function PlayIcon() {

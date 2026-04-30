@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Post } from "@/lib/wordpress";
+import { hasVideo } from "@/lib/hasVideo";
 
 interface Props {
   post: Post;
@@ -24,18 +25,6 @@ const HIDDEN_SLUGS = ["uncategorized", "necategorizat", "dotto-news", "breaking"
 
 function getCategoryColor(slug: string): string {
   return CATEGORY_COLORS[slug] || "bg-brand-blue";
-}
-
-function hasVideo(content: string): boolean {
-  if (!content) return false;
-  return (
-    content.includes("<iframe") ||
-    content.includes("youtube") ||
-    content.includes("vimeo") ||
-    content.includes("<video") ||
-    content.includes("wp-block-video") ||
-    content.includes("wp-block-embed")
-  );
 }
 
 function PlayIcon() {
