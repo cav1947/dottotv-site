@@ -50,6 +50,79 @@ async function lookupShortRecord(code: string): Promise<ShortRecord | null> {
   }
 }
 
+function stripHtml(s: string): string {
+  return s.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+}
+
+function extractArticleSlug(targetUrl: string): string | null {
+  try {
+    const u = new URL(targetUrl);
+    const host = u.hostname.toLowerCase().replace(/^www\./, "");
+    if (host !== "dottotv.ro") return null;
+    if (!u.pathname.startsWith("/articol/")) return null;
+    const slug = u.pathname.slice("/articol/".length).split("/")[0];
+    return slug || null;
+  } catch {
+    return null;
+  }
+}
+
+// Fallback: când Redis nu are titlu/descriere/imagine cached pentru un link
+// scurt (linkuri vechi sau fetch OG eșuat la creație), interogăm WPGraphQL
+// după slug ca să servim botului un preview corect.
+async function fetchArticleOgFromGraphQL(
+  slug: string
+): Promise<Partial<ShortRecord>> {
+  const api = process.env.WORDPRESS_API_URL;
+  if (!api) return {};
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 3000);
+
+  try {
+    const res = await fetch(api, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: `query OgPost($slug: String!) {
+          postBy(slug: $slug) {
+            title
+            excerpt
+            featuredImage { node { sourceUrl } }
+          }
+        }`,
+        variables: { slug },
+      }),
+      signal: controller.signal,
+      cache: "no-store",
+    });
+    if (!res.ok) return {};
+    const json = (await res.json()) as {
+      data?: {
+        postBy?: {
+          title?: string;
+          excerpt?: string;
+          featuredImage?: { node?: { sourceUrl?: string } };
+        } | null;
+      };
+    };
+    const post = json.data?.postBy;
+    if (!post) return {};
+    const title = stripHtml(post.title ?? "");
+    const description = stripHtml(post.excerpt ?? "").slice(0, 200);
+    const image = post.featuredImage?.node?.sourceUrl;
+    return {
+      title: title || undefined,
+      description: description || undefined,
+      image: image || undefined,
+    };
+  } catch {
+    return {};
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")
@@ -105,18 +178,39 @@ export async function middleware(request: NextRequest) {
   if (subdomain === "go") {
     const code = url.pathname.slice(1).split("/")[0];
 
+    // Indiferent de branch-ul ales mai jos, niciun răspuns servit pe
+    // go.dottotv.ro nu trebuie indexat — SEO-ul rămâne pe articolul original.
+    const noIndex = (res: NextResponse) => {
+      res.headers.set("X-Robots-Tag", "noindex, nofollow");
+      return res;
+    };
+
     if (!code || !/^[a-zA-Z0-9_-]{1,32}$/.test(code)) {
-      return NextResponse.redirect(FALLBACK_URL, 307);
+      return noIndex(NextResponse.redirect(FALLBACK_URL, 307));
     }
 
     const record = await lookupShortRecord(code);
     if (!record) {
-      return NextResponse.redirect(FALLBACK_URL, 307);
+      return noIndex(NextResponse.redirect(FALLBACK_URL, 307));
     }
 
     const ua = request.headers.get("user-agent") ?? "";
     if (isBot(ua)) {
-      return new NextResponse(renderOgHtml(record), {
+      let enriched = record;
+      if (!record.title || !record.description || !record.image) {
+        const slug = extractArticleSlug(record.url);
+        if (slug) {
+          const og = await fetchArticleOgFromGraphQL(slug);
+          enriched = {
+            url: record.url,
+            title: record.title || og.title,
+            description: record.description || og.description,
+            image: record.image || og.image,
+          };
+        }
+      }
+
+      return new NextResponse(renderOgHtml(enriched), {
         status: 200,
         headers: {
           "Content-Type": "text/html; charset=utf-8",
@@ -128,7 +222,7 @@ export async function middleware(request: NextRequest) {
       });
     }
 
-    return NextResponse.redirect(record.url, 301);
+    return noIndex(NextResponse.redirect(record.url, 301));
   }
 
   // ── tools.dottotv.ro/* → rewrite intern către /tools/* ──────────────

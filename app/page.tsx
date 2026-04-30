@@ -122,7 +122,8 @@ export default async function HomePage() {
   const hero4 = heroPosts[3];
   const hero5 = heroPosts[4];
 
-  const latestRow = uniquePosts.slice(5, 9);
+  const heroIds = new Set(heroPosts.map((p) => p.id));
+  const latestRow = uniquePosts.filter((p) => !heroIds.has(p.id)).slice(0, 4);
 
   return (
     <>
