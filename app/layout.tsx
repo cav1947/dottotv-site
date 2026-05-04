@@ -9,7 +9,7 @@ import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import CookieBanner from "@/components/CookieBanner";
 import BackToTop from "@/components/BackToTop";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
-import { Analytics } from "@vercel/analytics/react";
+import ConditionalAnalytics from "@/components/ConditionalAnalytics";
 import { getCategories, getBreakingNews } from "@/lib/wordpress";
 import { getExchangeRates } from "@/lib/bnr";
 import { organizationSchema, SITE_URL } from "@/lib/seo";
@@ -162,7 +162,7 @@ export default async function RootLayout({
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', '${GA_ID}', { page_path: window.location.pathname });
+                gtag('config', '${GA_ID}', { page_path: window.location.pathname, send_page_view: false });
               `}
             </Script>
           </>
@@ -178,7 +178,7 @@ export default async function RootLayout({
           <CookieBanner />
           <BackToTop />
           {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
-          <Analytics />
+          <ConditionalAnalytics />
         </Providers>
       </body>
     </html>

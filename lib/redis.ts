@@ -1,5 +1,5 @@
 // Helpers minime peste Upstash Redis REST API.
-// Folosit atât în middleware (Edge runtime) cât și în route handlers.
+// Folosit atât în proxy (Edge runtime) cât și în route handlers.
 //
 // Vercel KV / integrarea Upstash provisionează variabilele cu prefix KV_*.
 // Acceptăm și UPSTASH_* ca fallback pentru setup manual / dev local.

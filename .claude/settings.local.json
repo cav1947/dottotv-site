@@ -37,7 +37,8 @@
       "Bash(awk '{print $5, $9}')",
       "WebFetch(domain:www.dottotv.ro)",
       "Bash(echo \"EXIT $?\")",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(git rm *)"
     ]
   }
 }
