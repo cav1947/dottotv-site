@@ -143,7 +143,7 @@ export default async function HomePage() {
           <a href="https://vivo-shopping.com/ro/constanta" target="_blank" rel="noopener noreferrer sponsored" aria-label="Publicitate VIVO CJ" className="block w-full md:w-auto md:flex-shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/ads/VIVO!_CT_LOCAL-DISPLAY_728x90px%20_13_25mai.gif"
+              src="/ads/VIVO!_CT_LOCAL-DISPLAY_728x90px_020626.gif"
               alt="Publicitate"
               width={728}
               height={90}

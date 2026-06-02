@@ -63,6 +63,12 @@ export default function Sidebar({ categories, weather, latestPosts, evenimentePo
         </div>
       )}
 
+      {/* Banner publicitar — Stâna Dobrogeană */}
+      <a href="https://www.facebook.com/profile.php?id=100086550911687" target="_blank" rel="noopener noreferrer">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/ads/stana_dobrogeana.jpg" alt="Stâna Dobrogeană" style={{ width: "100%" }} />
+      </a>
+
       {/* Categorii cu badge-uri colorate */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
         <div className="flex items-center gap-2 px-3 py-2.5 border-b border-gray-100 dark:border-gray-700">
