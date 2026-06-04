@@ -151,6 +151,32 @@
          text-sm font-semibold px-4 py-2 rounded-md no-underline transition-colors;
 }
 
+/* Previzualizare PDF embedded (Google Docs Viewer) — înlocuiește wp-block-file
+   atunci când fișierul este un PDF. Link-ul de descărcare rămâne sub iframe. */
+.article-content .pdf-embed {
+  @apply my-6;
+}
+
+.article-content .pdf-embed__frame {
+  @apply block w-full rounded-lg border border-gray-200 dark:border-gray-700;
+  height: 400px; /* mobil */
+}
+
+@screen md {
+  .article-content .pdf-embed__frame {
+    height: 600px; /* desktop */
+  }
+}
+
+.article-content .pdf-embed__download {
+  @apply mt-3;
+}
+
+.article-content .pdf-embed__download .wp-block-file__button {
+  @apply inline-block bg-brand-blue hover:bg-brand-blue-dark text-white
+         text-sm font-semibold px-4 py-2 rounded-md no-underline transition-colors;
+}
+
 /* Embed-uri WordPress (YouTube, Facebook etc.) — wp-block-embed */
 .article-content .wp-block-embed {
   @apply my-6;

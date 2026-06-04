@@ -13,7 +13,7 @@ import {
   getPostCardBySlug,
   type PostCard,
 } from "@/lib/wordpress";
-import { extractRelatedSlugs, parseContentSegments } from "@/lib/parseContent";
+import { extractRelatedSlugs, parseContentSegments, transformPdfEmbeds } from "@/lib/parseContent";
 import { getWeatherConstanta } from "@/lib/weather";
 import Sidebar from "@/components/Sidebar";
 import AdBanner from "@/components/AdBanner";
@@ -345,7 +345,7 @@ export default async function ArticlePage({ params }: Props) {
               {/* Article body */}
               <div id="article-body" className="article-content">
                 {/* Primul paragraf */}
-                <div dangerouslySetInnerHTML={{ __html: firstPara }} />
+                <div dangerouslySetInnerHTML={{ __html: transformPdfEmbeds(firstPara) }} />
 
                 {/* ── Ultima oră ── */}
                 {ultimaOra.length > 0 && (
@@ -406,7 +406,7 @@ export default async function ArticlePage({ params }: Props) {
                 {/* Restul articolului — cu carduri related inline */}
                 {restSegments.map((seg, i) =>
                   seg.type === "html" ? (
-                    <div key={i} dangerouslySetInnerHTML={{ __html: seg.content }} />
+                    <div key={i} dangerouslySetInnerHTML={{ __html: transformPdfEmbeds(seg.content) }} />
                   ) : inlineCardMap.has(seg.slug) ? (
                     <RelatedArticleCard key={i} post={inlineCardMap.get(seg.slug)!} />
                   ) : null
