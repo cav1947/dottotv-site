@@ -104,6 +104,23 @@ export default function Sidebar({ categories, weather, latestPosts, evenimentePo
         </div>
       )}
 
+      {/* Banner publicitar — Muzeul de Etnografie 300×250 */}
+      <a
+        href="https://www.muzeuetnocta.ro/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Publicitate Muzeul de Etnografie"
+        className="block"
+      >
+        <Image
+          src="/ads/banner_300x250_MAP.png"
+          alt="Muzeul de Etnografie"
+          width={300}
+          height={250}
+          className="mx-auto max-w-full h-auto"
+        />
+      </a>
+
       {/* Via Dobrogetica — 300×600 */}
       <a
         href="https://viadobrogetica.ro"
