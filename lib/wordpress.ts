@@ -44,27 +44,45 @@ export interface PostCard {
 const API_URL =
   process.env.WORDPRESS_API_URL || "https://dottotv.ro/graphql";
 
+// Timeout pe fetch-urile către WordPress. Un backend lent/blocat (ex. în timpul
+// build-ului pe Vercel) nu mai blochează la nesfârșit: după acest interval
+// fetch-ul e abortat și aruncă, iar callerii cad pe fallback-urile lor (.catch).
+const FETCH_TIMEOUT_MS = Number(process.env.WP_FETCH_TIMEOUT_MS) || 15000;
+
 async function gql<T = unknown>(
   query: string,
   variables?: Record<string, unknown>,
   fetchInit?: RequestInit
 ): Promise<T> {
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables: variables ?? {} }),
-    next: { revalidate: 60 },
-    ...fetchInit,
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
-  if (!res.ok) throw new Error(`GraphQL HTTP error ${res.status}`);
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, variables: variables ?? {} }),
+      next: { revalidate: 60 },
+      signal: controller.signal,
+      ...fetchInit,
+    });
 
-  const json = await res.json();
-  if (json.errors?.length) {
-    throw new Error(json.errors[0]?.message ?? "GraphQL error");
+    if (!res.ok) throw new Error(`GraphQL HTTP error ${res.status}`);
+
+    const json = await res.json();
+    if (json.errors?.length) {
+      throw new Error(json.errors[0]?.message ?? "GraphQL error");
+    }
+
+    return json.data as T;
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") {
+      throw new Error(`GraphQL fetch timeout după ${FETCH_TIMEOUT_MS}ms`);
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
   }
-
-  return json.data as T;
 }
 
 // ─── Fragments ────────────────────────────────────────────────────────────────
