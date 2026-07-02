@@ -113,7 +113,7 @@ export default function Sidebar({ categories, weather, latestPosts, evenimentePo
         className="block"
       >
         <Image
-          src="/ads/banner_300x250_MAP.png"
+          src="/ads/banner_MAP 2.jpeg"
           alt="Muzeul de Etnografie"
           width={300}
           height={250}
