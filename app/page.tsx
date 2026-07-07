@@ -179,16 +179,16 @@ export default async function HomePage() {
           </div>
         </ScrollReveal>
 
-        {/* ── AD strip — Confort Urban ── */}
+        {/* ── AD strip — SEAS ── */}
         <div
           className="mb-4 flex justify-center items-center py-2 rounded-xl"
           style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f7ff 100%)" }}
         >
-          <a href="https://conforturban-ct.ro/" target="_blank" rel="noopener noreferrer sponsored" aria-label="Publicitate Confort Urban" className="block w-full md:w-auto md:flex-shrink-0">
+          <a href="https://seas.ro/" target="_blank" rel="noopener noreferrer sponsored" aria-label="Publicitate SEAS" className="block w-full md:w-auto md:flex-shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/ads/Confort%20urban728x90.webp"
-              alt="Publicitate"
+              src="/ads/SEAS-5_Banner-digital__728x90-px.png"
+              alt="SEAS"
               width={728}
               height={90}
               style={{ display: "block", objectFit: "contain" }}
