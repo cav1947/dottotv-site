@@ -40,7 +40,8 @@
       "Bash(npx eslint *)",
       "Bash(git rm *)",
       "Bash(echo \"EXIT CODE: $?\")",
-      "Bash(npm ci *)"
+      "Bash(npm ci *)",
+      "PowerShell(git push *)"
     ]
   }
 }

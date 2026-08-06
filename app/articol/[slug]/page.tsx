@@ -418,6 +418,22 @@ export default async function ArticlePage({ params }: Props) {
                 )}
               </div>
 
+              {/* Banner Ghid colectare separată Polaris */}
+              <a
+                href="https://polaris.ro/index.php/ghid-colectare-separata/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block my-8"
+              >
+                <Image
+                  src="/ads/ghid-colectare-separata.jpg"
+                  alt="Ghid colectare separată Polaris"
+                  width={1600}
+                  height={868}
+                  className="w-full h-auto rounded-xl"
+                />
+              </a>
+
               <SocialEmbeds />
 
               {/* Ad after content */}
