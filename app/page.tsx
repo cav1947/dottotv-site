@@ -143,12 +143,12 @@ export default async function HomePage() {
           <a href="https://vivo-shopping.com/ro/constanta" target="_blank" rel="noopener noreferrer sponsored" aria-label="Publicitate VIVO CJ" className="block w-full md:w-auto md:flex-shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/ads/VIVO!_CT_LOCAL-DISPLAY_728x90px_020626.gif"
+              src="/ads/VIVO!_CT_BTS_855x90px.gif"
               alt="Publicitate"
-              width={728}
+              width={855}
               height={90}
               style={{ display: "block", objectFit: "contain" }}
-              className="w-full h-auto md:w-[728px] md:h-[90px]"
+              className="w-full h-auto md:w-[728px] md:h-auto"
             />
           </a>
         </div>
