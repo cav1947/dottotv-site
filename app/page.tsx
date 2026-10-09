@@ -179,20 +179,18 @@ export default async function HomePage() {
           </div>
         </ScrollReveal>
 
-        {/* ── AD strip — SEAS ── */}
+        {/* ── AD strip — Curtea Brâncovenească ── */}
         <div
           className="mb-4 flex justify-center items-center py-2 rounded-xl"
           style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #f5f7ff 100%)" }}
         >
-          <a href="https://seas.ro/" target="_blank" rel="noopener noreferrer sponsored" aria-label="Publicitate SEAS" className="block w-full md:w-auto md:flex-shrink-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/ads/SEAS-5_Banner-digital__728x90-px.png"
-              alt="SEAS"
-              width={728}
-              height={90}
-              style={{ display: "block", objectFit: "contain" }}
-              className="w-full h-auto md:w-[728px] md:h-[90px]"
+          <a href="https://scoalabrancoveneasca.ro/" target="_blank" rel="noopener noreferrer" aria-label="Publicitate Curtea Brâncovenească" className="block w-full max-w-[728px] mx-auto">
+            <Image
+              src="/ads/curtea brancoveneasca -scoala.jpeg"
+              alt="Curtea Brâncovenească - Școala Brâncovenească"
+              width={1600}
+              height={466}
+              className="block w-full max-w-[728px] h-auto mx-auto"
             />
           </a>
         </div>
